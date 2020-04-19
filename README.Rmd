@@ -13,9 +13,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## How is the global COVID-19 pandemic affecting the productivity of male versus female academics?
 
-```{r Load packages, message=FALSE, warning=FALSE, include=FALSE}
+I read on Twitter that an editor of a peer-reviewed journal reported that submissions from female scholars were way down in March, 2020, presumably because they disproportionately shouldered increased caregiving burdens because of school and childcare closures. Is this borne out by data?
 
-library(rplos)
+First, I loaded some useful packages. 
+
+```{r Load packages, message=FALSE, warning=FALSE}
+
 library(tidyverse) #includes ggplot2, dplyr, readr, stringr
 library(knitr)
 library(cowplot)
@@ -27,9 +30,12 @@ library(gender)
 library(png)
 library(reticulate)
 library(aRxiv)
+library(lubridate)
+library(anytime)
 
 ```
 
+Next, I scraped submission data from arXiv (https://arxiv.org/), which is the main preprint server for physics, math, computer science, statistics, and other quantitative disciplines. I scraped all records for March 15-April 15, 2020, during the COVID-19 pandemic, and for the same date range in 2019.
 
 ```{r Scrape arxiv, eval=FALSE}
 #Not run
@@ -55,7 +61,116 @@ df.2019.full <- rbind(df.2019.1, df.2019.2, df.2019.3, df.2019.4, df.2019.5)
 write.csv(df.2019.full, file="arxiv_2019_data.csv")
 ```
 
-```{r Tidy data}
-df.2020 <- read.csv("arxiv_2020_data.csv")
+Next, I tidied the data by splitting strings of author names to identify the first and last author of each preprint. I also calculated the number of authors per preprint. 
+
+```{r Tidy author names}
+
+df.2020 <- read.csv("arxiv_2020_data.csv") #Read in data
 df.2019 <- read.csv("arxiv_2019_data.csv")
+
+df.2020$author.n <- str_count(df.2020$authors, pattern = "\\|")+1 #Count author number
+df.2019$author.n <- str_count(df.2019$authors, pattern = "\\|")+1 
+
+max(df.2020$author.n) #Max author number 
+max(df.2019$author.n) 
+
+df.2020$first.author <- sapply(strsplit(as.character(df.2020$authors), "|", fixed=TRUE), head, 1) #Extract first author 
+df.2019$first.author <- sapply(strsplit(as.character(df.2019$authors), "|", fixed=TRUE), head, 1)
+
+df.2020$last.author <- sapply(strsplit(as.character(df.2020$authors), "|", fixed=TRUE), tail, 1) #Extract last author
+df.2019$last.author <- sapply(strsplit(as.character(df.2019$authors), "|", fixed=TRUE), tail, 1) 
+
+df.2020$first.author.first.name <- sapply(strsplit(df.2020$first.author, " "), head, 1) #Extract first author first name
+df.2019$first.author.first.name <- sapply(strsplit(df.2019$first.author, " "), head, 1)
+
+df.2020$last.author.first.name <- sapply(strsplit(df.2020$last.author, " "), head, 1) #Extract last author first name
+df.2019$last.author.first.name <- sapply(strsplit(df.2019$last.author, " "), head, 1)
+
 ```
+
+Then I cleaned up the categories and dates for later use. 
+
+```{r Tidy dates and categories}
+
+df.2020$cat <- sapply(strsplit(as.character(df.2020$primary_category), ".", fixed=TRUE), head, 1) #Lump similar categories
+df.2019$cat <- sapply(strsplit(as.character(df.2019$primary_category), ".", fixed=TRUE), head, 1)
+
+df.2019$date <- as.POSIXct(df.2019$submitted)
+df.2019$mm.dd <- as.factor(paste0(month(df.2019$date), "/", day(df.2019$date)))
+
+df.2020$date <- as.POSIXct(df.2020$submitted)
+df.2020$mm.dd <- as.factor(paste0(month(df.2020$date), "/", day(df.2020$date)))
+
+```
+
+Assign gender using the gender package. 
+
+```{r Assign gender}
+
+gender.2020 <- NULL
+gender.2020 <- gender(df.2020$first.author.first.name, method = "ssa")
+gender.2020 <- unique(gender.2020[ , c(1,2,4)])
+df.2020 <- merge(df.2020, gender.2020, by.x = "first.author.first.name",  by.y ="name", all = TRUE)
+colnames(df.2020)[25:26] <- c("first.author.prop.male", "first.author.gender")
+
+gender.2020 <- NULL
+gender.2020 <- gender(df.2020$last.author.first.name, method = "ssa")
+gender.2020 <- unique(gender.2020[ , c(1,2,4)])
+df.2020 <- merge(df.2020, gender.2020, by.x = "last.author.first.name",  by.y ="name", all = TRUE)
+colnames(df.2020)[27:28] <- c("last.author.prop.male", "last.author.gender")
+
+gender.2019 <- NULL
+gender.2019 <- gender(df.2019$first.author.first.name, method = "ssa")
+gender.2019 <- unique(gender.2019[ , c(1,2,4)])
+df.2019 <- merge(df.2019, gender.2019, by.x = "first.author.first.name",  by.y ="name", all = TRUE)
+colnames(df.2019)[25:26] <- c("first.author.prop.male", "first.author.gender")
+
+gender.2019 <- NULL
+gender.2019 <- gender(df.2019$last.author.first.name, method = "ssa")
+gender.2019 <- unique(gender.2019[ , c(1,2,4)])
+df.2019 <- merge(df.2019, gender.2019, by.x = "last.author.first.name",  by.y ="name", all = TRUE)
+colnames(df.2019)[27:28] <- c("last.author.prop.male", "last.author.gender")
+
+```
+
+#First authors
+
+```{r Visualize firs author data}
+
+sum.2019 <- subset(df.2019, !is.na(first.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
+sum.2019 <- ungroup(sum.2019)
+sum.2019$year <- "2019"
+
+sum.2020 <- subset(df.2020, !is.na(first.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
+sum.2020 <- ungroup(sum.2020)
+sum.2020$year <- "2020"
+
+summary <- rbind(sum.2019, sum.2020)
+summary$anydate <- anydate(summary$mm.dd)
+
+p1 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("First authors")+theme_cowplot()
+p1
+
+```
+
+#Last authors
+
+```{r Visualize last author data}
+
+sum.2019 <- subset(df.2019, !is.na(last.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
+sum.2019 <- ungroup(sum.2019)
+sum.2019$year <- "2019"
+
+sum.2020 <- subset(df.2020, !is.na(last.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
+sum.2020 <- ungroup(sum.2020)
+sum.2020$year <- "2020"
+
+summary <- rbind(sum.2019, sum.2020)
+summary$anydate <- anydate(summary$mm.dd)
+
+p2 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="loess", se=FALSE)+ggtitle("Last authors")+theme_cowplot()
+p2
+
+p3 <- plot_grid(p1, p2, nrow=2, labels=c("A", "B"))
+p3
+save_plot("plot.png", p3, base_height=5, base_width=6)
