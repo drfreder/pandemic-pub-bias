@@ -183,7 +183,7 @@ sum.2020$year <- "2020"
 summary <- rbind(sum.2019, sum.2020)
 summary$anydate <- anydate(summary$mm.dd)
 
-p2 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="loess", se=FALSE)+ggtitle("Last authors")+theme_cowplot()
+p2 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("Last authors")+theme_cowplot()
 p2
 ```
 
