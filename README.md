@@ -27,6 +27,7 @@ library(reticulate)
 library(aRxiv)
 library(lubridate)
 library(anytime)
+library(zoo)
 ```
 
 Next, I scraped submission data from arXiv (<https://arxiv.org/>), which
@@ -102,11 +103,8 @@ use.
 df.2020$cat <- sapply(strsplit(as.character(df.2020$primary_category), ".", fixed=TRUE), head, 1) #Lump similar categories
 df.2019$cat <- sapply(strsplit(as.character(df.2019$primary_category), ".", fixed=TRUE), head, 1)
 
-df.2019$date <- as.POSIXct(df.2019$submitted)
-df.2019$mm.dd <- as.factor(paste0(month(df.2019$date), "/", day(df.2019$date)))
-
-df.2020$date <- as.POSIXct(df.2020$submitted)
-df.2020$mm.dd <- as.factor(paste0(month(df.2020$date), "/", day(df.2020$date)))
+df.2019$date <- as.Date(df.2019$submitted)
+df.2020$date <- as.Date(df.2020$submitted)
 ```
 
 Assign gender using the gender package.
@@ -124,41 +122,43 @@ gender.2020 <- gender(df.2020$first.author.first.name, method = "ssa")
 ``` r
 gender.2020 <- unique(gender.2020[ , c(1,2,4)])
 df.2020 <- merge(df.2020, gender.2020, by.x = "first.author.first.name",  by.y ="name", all = TRUE)
-colnames(df.2020)[25:26] <- c("first.author.prop.male", "first.author.gender")
+colnames(df.2020)[24:25] <- c("first.author.prop.male", "first.author.gender")
 
 gender.2020 <- NULL
 gender.2020 <- gender(df.2020$last.author.first.name, method = "ssa")
 gender.2020 <- unique(gender.2020[ , c(1,2,4)])
 df.2020 <- merge(df.2020, gender.2020, by.x = "last.author.first.name",  by.y ="name", all = TRUE)
-colnames(df.2020)[27:28] <- c("last.author.prop.male", "last.author.gender")
+colnames(df.2020)[26:27] <- c("last.author.prop.male", "last.author.gender")
 
 gender.2019 <- NULL
 gender.2019 <- gender(df.2019$first.author.first.name, method = "ssa")
 gender.2019 <- unique(gender.2019[ , c(1,2,4)])
 df.2019 <- merge(df.2019, gender.2019, by.x = "first.author.first.name",  by.y ="name", all = TRUE)
-colnames(df.2019)[25:26] <- c("first.author.prop.male", "first.author.gender")
+colnames(df.2019)[24:25] <- c("first.author.prop.male", "first.author.gender")
 
 gender.2019 <- NULL
 gender.2019 <- gender(df.2019$last.author.first.name, method = "ssa")
 gender.2019 <- unique(gender.2019[ , c(1,2,4)])
 df.2019 <- merge(df.2019, gender.2019, by.x = "last.author.first.name",  by.y ="name", all = TRUE)
-colnames(df.2019)[27:28] <- c("last.author.prop.male", "last.author.gender")
+colnames(df.2019)[26:27] <- c("last.author.prop.male", "last.author.gender")
 ```
 
-\#First
+\#\#First
 authors
 
 ``` r
-sum.2019 <- subset(df.2019, !is.na(first.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
+sum.2019 <- subset(df.2019, !is.na(first.author.gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
 sum.2019 <- ungroup(sum.2019)
 sum.2019$year <- "2019"
+sum.2019$date.noyear <- paste0(month(sum.2019$date), "/", day(sum.2019$date))
 
-sum.2020 <- subset(df.2020, !is.na(first.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
+sum.2020 <- subset(df.2020, !is.na(first.author.gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/n)
 sum.2020 <- ungroup(sum.2020)
 sum.2020$year <- "2020"
+sum.2020$date.noyear <- paste0(month(sum.2020$date), "/", day(sum.2020$date))
 
 summary <- rbind(sum.2019, sum.2020)
-summary$anydate <- anydate(summary$mm.dd)
+summary$anydate <- anydate(summary$date.noyear)
 
 p1 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("First authors")+theme_cowplot()
 p1
@@ -168,22 +168,25 @@ p1
 
 ![](README_files/figure-gfm/Visualize%20firs%20author%20data-1.png)<!-- -->
 
-\#Last
+\#\#Last
 authors
 
 ``` r
-sum.2019 <- subset(df.2019, !is.na(last.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
+sum.2019 <- subset(df.2019, !is.na(last.author.gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
 sum.2019 <- ungroup(sum.2019)
 sum.2019$year <- "2019"
+sum.2019$date.noyear <- paste0(month(sum.2019$date), "/", day(sum.2019$date))
 
-sum.2020 <- subset(df.2020, !is.na(last.author.gender)) %>% group_by(mm.dd) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
+sum.2020 <- subset(df.2020, !is.na(last.author.gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/n)
 sum.2020 <- ungroup(sum.2020)
 sum.2020$year <- "2020"
+sum.2020$date.noyear <- paste0(month(sum.2020$date), "/", day(sum.2020$date))
 
 summary <- rbind(sum.2019, sum.2020)
-summary$anydate <- anydate(summary$mm.dd)
+summary$anydate <- anydate(summary$date.noyear)
+summary$weekday <- weekdays(summary$date)
 
-p2 <- ggplot(data=summary, aes(x=as.Date(anydate), y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("Last authors")+theme_cowplot()
+p2 <- ggplot(data=summary, aes(x=anydate, y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("Last authors")+theme_cowplot()
 p2
 ```
 
@@ -207,3 +210,20 @@ p3
 ``` r
 save_plot("plot.png", p3, base_height=5, base_width=6)
 ```
+
+``` r
+df.full <- rbind(df.2019, df.2020)
+df.full$year <- as.factor(year(df.full$date))
+df.full$big.cat <- ifelse((df.full$cat == "astro-ph" | df.full$cat == "cond-mat" | df.full$cat == "gr-qc" | df.full$cat == "hep-ex" | df.full$cat == "physics" | df.full$cat == "nucl-ex"| df.full$cat == "quant-ph" | df.full$cat == "nucl-th" | df.full$cat == "hep-ph" | df.full$cat == "nlin" | df.full$cat == "hep-th" | df.full$cat == "hep-lat"), "physics", ifelse(df.full$cat == "stat", "stats", ifelse(df.full$cat == "math" | df.full$cat == "math-ph", "math", ifelse(df.full$cat=="cs", "cs", ifelse(df.full$cat == "q-bio", "q-bio", ifelse(df.full$cat=="q-fin" | df.full$cat == "econ", "econ", ifelse(df.full$cat=="eess", "eess", NA)))))))
+
+big.sum.last <- subset(df.full, !is.na(last.author.gender)) %>% group_by(year, big.cat) %>% summarize(total = n(), female.n = length(which(last.author.gender =="female")), female.per = female.n/total)
+
+big.sum.first <- subset(df.full, !is.na(first.author.gender)) %>% group_by(year, big.cat) %>% summarize(total = n(), female.n = length(which(first.author.gender =="female")), female.per = female.n/total)
+
+min = 500
+
+p4 <- ggplot()+geom_point(data=subset(big.sum.last, total > min), aes(x=year,y=female.per), size=5, color="blue")+geom_line(data=subset(big.sum.last, total > min), aes(x=year,y=female.per, group=1), size=1, color="blue")+facet_wrap(~big.cat)
+p4
+```
+
+![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
