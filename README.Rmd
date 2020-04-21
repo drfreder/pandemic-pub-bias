@@ -36,6 +36,10 @@ library(lubridate)
 library(anytime)
 library(zoo)
 library(viridis)
+library(httr)
+library(rbiorxiv)
+library(jsonlite)
+
 
 ```
 
@@ -77,9 +81,6 @@ df.2019$author.n <- str_count(df.2019$authors, pattern = "\\|")+1
 
 max(df.2020$author.n) #Max author number 
 max(df.2019$author.n) 
-
-kable(df.2020 %>% group_by(author.n) %>% summarize(n=n()))
-kable(df.2019 %>% group_by(author.n) %>% summarize(n=n()))
 
 df.2020$first.author <- sapply(strsplit(as.character(df.2020$authors), "|", fixed=TRUE), head, 1) #Extract first author 
 df.2019$first.author <- sapply(strsplit(as.character(df.2019$authors), "|", fixed=TRUE), head, 1)
@@ -318,6 +319,8 @@ p8 <- plot_grid(p5,p6,p7, labels=c("A", "B", "C"))
 save_plot("plot2.png", p8, base_height=6, base_width=8)
 ```
 
+## By number of male or female authors, regardless of how many other authors of the opposite sex are on a preprint
+
 ```{r}
 summary$female.n <- as.factor(summary$female.n)
 sum.sum.female <- subset(summary, total.n > 0 & female.n != 0) %>% group_by (year, female.n) %>% summarize(total.pubs = sum(n, na.rm=TRUE))
@@ -358,7 +361,71 @@ p9
 p10 <- ggplot(data=all, aes(fill=gender, x=`Male or female authors (no.)`, y=dif))+ylab("Change in number of preprints, 2019 to 2020")+geom_bar(position="dodge", stat="identity")+theme_cowplot()
 p10
 
-p11 <- ggplot(data=all.long, aes(fill=year, x=`Male or female authors (no.)`, y=as.numeric(number)))+labs(fill="Year")+ylab("Preprints (no.)")+geom_bar(position="dodge", stat="identity")+theme_cowplot()+scale_fill_viridis(discrete=TRUE)+facet_wrap(~gender)
+p11 <- ggplot(data=all.long, aes(fill=year, x=`Male or female authors (no.)`, y=as.numeric(number)))+labs(fill="Year")+ylab("Preprints (no.)")+geom_bar(position="dodge", stat="identity")+theme_cowplot()+scale_fill_viridis(option = "cividis", discrete=TRUE)+facet_wrap(~gender)
 p11
 ```
 
+
+```{r Scrape biorxiv}
+
+#Scape biorxiv
+df.b.2020 <- biorxiv_content(from = "2020-03-15", to = "2020-04-15", limit = "*", format = "df")
+df.b.2019 <- biorxiv_content(from = "2019-03-15", to = "2019-04-15", limit = "*", format = "df")
+
+write.csv(df.b.2019, "biorxiv_2019_data.csv")
+write.csv(df.b.2020, "biorxiv_2020_data.csv")
+
+```
+
+```{r Tidy names}
+
+df.b.2020$author.n <- str_count(df.b.2020$authors, pattern = "\\;")+1 #Count author number
+df.b.2019$author.n <- str_count(df.b.2019$authors, pattern = "\\;")+1 
+
+max(df.b.2020$author.n) #Max author number 
+max(df.b.2019$author.n) 
+
+df.b.2020$first.author <- trimws(sapply(strsplit(as.character(df.b.2020$authors), ";", fixed=TRUE), head, 1)) #Extract first author 
+df.b.2019$first.author <- trimws(sapply(strsplit(as.character(df.b.2019$authors), ";", fixed=TRUE), head, 1))
+
+df.b.2020$cor.author.first.name <- sapply(strsplit(df.b.2020$author_corresponding, " "), head, 1)
+df.b.2019$cor.author.first.name <- sapply(strsplit(df.b.2019$author_corresponding, " "), head, 1)
+
+```
+
+```{r}
+gender.2020 <- NULL
+gender.2020 <- gender(df.b.2020$cor.author.first.name, method = "ssa")
+gender.2020 <- unique(gender.2020[ , c(1,2,4)])
+df.b.2020 <- merge(df.b.2020, gender.2020, by.x = "cor.author.first.name",  by.y ="name", all = TRUE)
+
+gender.2019 <- NULL
+gender.2019 <- gender(df.b.2019$cor.author.first.name, method = "ssa")
+gender.2019 <- unique(gender.2019[ , c(1,2,4)])
+df.b.2019 <- merge(df.b.2019, gender.2019, by.x = "cor.author.first.name",  by.y ="name", all = TRUE)
+
+bsum.2020 <- df.b.2020 %>% group_by(gender) %>% summarize(n=n())
+bsum.2019 <- df.b.2019 %>% group_by(gender) %>% summarize(n=n())
+
+df.b.2019$date <- as.Date(df.b.2019$date)
+df.b.2020$date <- as.Date(df.b.2020$date)
+
+sum.b.2019 <- subset(df.b.2019, !is.na(gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(gender =="female")), female.per = female.n/n)
+sum.b.2019 <- ungroup(sum.b.2019)
+sum.b.2019$year <- "2019"
+sum.b.2019$date.noyear <- paste0(month(sum.b.2019$date), "/", day(sum.b.2019$date))
+
+sum.b.2020 <- subset(df.b.2020, !is.na(gender)) %>% group_by(date) %>% summarize(n=n(), female.n = length(which(gender =="female")), female.per = female.n/n)
+sum.b.2020 <- ungroup(sum.b.2020)
+sum.b.2020$year <- "2020"
+sum.b.2020$date.noyear <- paste0(month(sum.b.2020$date), "/", day(sum.b.2020$date))
+
+summaryb <- rbind(sum.b.2019, sum.b.2020)
+summaryb$anydate <- anydate(summaryb$date.noyear)
+summaryb$weekday <- weekdays(summaryb$date)
+
+p12 <- ggplot(data=summaryb, aes(x=anydate, y=female.per, color=year))+geom_point()+ylab("Female (%)")+xlab("Date")+labs(color="Year")+geom_smooth(method="lm", se=FALSE)+ggtitle("Corresponding authors")+theme_cowplot()
+p12
+
+save_plot("plot3.png", p12, base_height=2.5, base_width=6)
+```
