@@ -306,11 +306,5 @@ p3
 
 ``` r
 p4 <- plot_grid(p1, p2, p3, nrow=1)
-p4
-```
-
-![](README_files/figure-gfm/Visualize%20biorxiv%20data-2.png)<!-- -->
-
-``` r
 save_plot("plot.png", p4, base_height=8, base_width=16)
 ```
