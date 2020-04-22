@@ -134,7 +134,7 @@ write.csv(df.full.output, "arxiv_full_gender.csv")
 
 I calculated how many male and female authors there were on arXiv preprints in 2020 versus 2019. 
 
-```{r Visualize data, fig.width=4, fig.height=4, dpi=600}
+```{r Visualize data, fig.width=8, fig.height=4, dpi=300}
 
 df.full <- read_csv("arxiv_full_gender.csv")
 
@@ -154,7 +154,7 @@ p1
 
 How many preprints were sole-authored by a male versus a female academic in Mar/Apr, 2020, compared to the same dates last year? 
 
-```{r Sole authors}
+```{r Sole authors, fig.width=8, fig.height=4, dpi=300}
 
 summary <- df.full %>% group_by(year, male.n, female.n) %>% summarize(n = n())
 summary$total.n <- summary$male.n+summary$female.n
@@ -207,7 +207,7 @@ df.b.full$year <- as.factor(year(as.Date(df.b.full$date))) #Extract year
 
 Finally, I plot the numbers of male and female corresponding authors on bioRxiv preprints between Mar/Apr 2019 and Mar/Apr 2020. 
 
-```{r Visualize biorxiv data}
+```{r Visualize biorxiv data, fig.width=8, fig.height=4, dpi=300}
 
 summary <- subset(df.b.full, !is.na(gender)) %>% group_by(year, gender) %>% summarize(n = n())
 summary.wide <- spread(summary, year, n)
@@ -220,7 +220,6 @@ p3 <- ggplot(data=summary.long, aes(fill=as.factor(year), y=number, x=gender))+g
 p3
 
 p4 <- plot_grid(p1, p2, p3, nrow=1)
-p4
 save_plot("plot.png", p4, base_height=8, base_width=16)
 
 ```
