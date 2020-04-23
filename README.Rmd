@@ -31,7 +31,6 @@ library(rbiorxiv)
 library(lubridate)
 library(anytime)
 library(wesanderson)
-library(tidyquant)
 
 ```
 
@@ -257,6 +256,7 @@ df.all2020 <- df.all2020[!duplicated(df.all2020), ] #Remove duplicated removes
 covid.start <- "2020-03-11" #Set the start date for the COVID pandemic, somewhat arbitrarily 
 
 df.all2020$COVID <- ifelse(as.Date(as.character(df.all2020$date), format="%Y-%m-%d") >= as.Date(as.character(covid.start), format="%Y-%m-%d"), "Y", "N")
+df.all2020$date <- as.Date(df.all2020$submitted)
 
 arxiv.d <- df.all2020 %>% group_by(date, COVID) %>% summarize(female.n = sum(female.n, na.rm=TRUE), male.n = sum(male.n, na.rm=TRUE))
 arxiv.d$date <- as.Date(arxiv.d$date)
@@ -268,7 +268,7 @@ min <- as.Date(as.character(covid.start), format="%Y-%m-%d")-length(unique(df.al
 arxiv.w.long$gender <- as.factor(arxiv.w.long$gender)
 levels(arxiv.w.long$gender) <- c("Female", "Male")
 
-p3 <- ggplot(data=subset(arxiv.w.long, year(week) == 2020), aes(color=gender, y=n, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date(Inf), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(data=subset(arxiv.w.long, year(week) == 2020 & week != "2020-04-12"), aes(color=gender, y=n, x=week), se=FALSE)+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
+p3 <- ggplot(data=subset(arxiv.w.long, year(week) == 2020), aes(color=gender, y=n, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(data=subset(arxiv.w.long, year(week) == 2020 & week != "2020-04-12"), aes(color=gender, y=n, x=week), se=FALSE)+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
 p3
 
 
@@ -279,7 +279,7 @@ arxiv.m.long$pubs.per.day <- arxiv.m.long$n/arxiv.m.long$n.days
 arxiv.m.long$gender <- as.factor(arxiv.m.long$gender)
 levels(arxiv.m.long$gender) <- c("Female", "Male")
 
-p8 <- ggplot(data=arxiv.m.long, aes(color=gender, y=pubs.per.day, x=month))+geom_point()+geom_line()+theme_cowplot()+ggtitle("aRxiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(color="Gender")
+p8 <- ggplot(data=arxiv.m.long, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)
 p8
 
 ```
@@ -385,7 +385,7 @@ biorxiv.w <-biorxiv.d %>% group_by(week, gender) %>% summarize(sum=sum(n))
 biorxiv.w$gender <- as.factor(biorxiv.w$gender)
 levels(biorxiv.w$gender) <- c("Female", "Male")
 
-p6 <- ggplot(data=subset(biorxiv.w, year(week) == 2020), aes(color=gender, y=sum, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date(Inf), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(span=1, se=FALSE)+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
+p6 <- ggplot(data=subset(biorxiv.w, year(week) == 2020), aes(color=gender, y=sum, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(span=1, se=FALSE)+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
 p6
 
 df.b.all2020$month <- floor_date(df.b.all2020$date, "month")
@@ -393,8 +393,12 @@ biorxiv.m <- subset(df.b.all2020, !is.na(gender)) %>% group_by(month, gender) %>
 biorxiv.m$gender <- as.factor(biorxiv.m$gender)
 levels(biorxiv.m$gender) <- c("Female", "Male")
 
-p7 <- ggplot(data=biorxiv.m, aes(color=gender, y=pubs.per.day, x=month))+geom_point()+geom_line()+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(color="Gender")
+p7 <- ggplot(data=biorxiv.m, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)
 p7
 
+p8 <- plot_grid(p8, p7, nrow=1)
+p8
+
+save_plot("plot2.png", p8, base_height=8, base_width=16)
 ```
 
