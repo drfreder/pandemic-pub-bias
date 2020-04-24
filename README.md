@@ -245,7 +245,7 @@ sole.long <- gather(sole.wide, year, number, `2018`:`2020`)
 sole.wide$per.dif.1920 <- (sole.wide$`2020`/sole.wide$`2019`)*100-100
 sole.wide$per.dif.1819 <- (sole.wide$`2019`/sole.wide$`2018`)*100-100
 
-p2 <- ggplot(data=sole.long, aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2018", "Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.15, 2.15),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+annotate("text", x=c(0.8, 1.8), y=c(620,2350), label = paste0("+", round(sole.wide$per.dif.1819[1:2], 1), "%"))+theme(legend.position="none")
+p2 <- ggplot(data=sole.long, aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2018", "Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.15, 2.15),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+annotate("text", x=c(0.8, 1.8), y=c(620,2350), label = paste0("+", round(sole.wide$per.dif.1819[1:2], 1), "%"))+theme(legend.position="none")
 p2
 ```
 
