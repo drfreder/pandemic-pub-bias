@@ -26,10 +26,10 @@ which is the main preprint server for physics, math, computer science,
 statistics, and other quantitative disciplines. I began by scraping all
 records for March 15-April 15, 2020, during the COVID-19 pandemic, and
 for the same date range in 2019. I then expanded to the same dates in
-2018 and 2017. Finally, I scraped all the data for Jan. 1-March 15,
-2020, immediately before the pandemic, and updated the pandemic data
-with the most recent dates (April 16-22, 2020). I scraped the data in
-batches, as recommended in the aRxiv package tutorial.
+2018. Finally, I scraped all the data for Jan. 1-March 15, 2020,
+immediately before the pandemic, and updated the pandemic data with the
+most recent dates (April 16-22, 2020). I scraped the data in batches, as
+recommended in the aRxiv package tutorial.
 
 ``` r
 #Not run
@@ -168,12 +168,12 @@ split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)}
 #For the year over year dataset
 df.full$split.names <- lapply(df.full$authors, split.names)
 
-tmp <- NULL
-all_first_names <- word(unlist(df.full$split.names),1)
-head(all_first_names)
-gender <- gender(all_first_names, method = "ssa")
-gender <- unique(gender[ , c(1,2,4)])
+all_first_names <- word(unlist(df.full$split.names),1) #Make a list of all first author names
+gender <- gender(all_first_names, method = "ssa") #Assign gender
+gender <- unique(gender[ , c(1,2,4)]) #Keep only unique names
 
+#This loop is an inelegant way of counting the number of male and female authors for each paper
+tmp <- NULL
 for(i in 1:length(df.full$authors)){
   tmp <- as.data.frame(word(unlist(df.full$split.names[[i]]), 1))
   colnames(tmp) <- "name"
@@ -229,6 +229,14 @@ p1
 
 ![](README_files/figure-gfm/Visualize%20data-1.png)<!-- -->
 
+``` r
+#Just compare 2019 and 2020
+p2 <- ggplot(data=subset(all.long, year != 2018), aes(fill=as.factor(year), y=number, x=Gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, all authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(6850,23900), label = paste0("+", round(all.t$per.dif.1920[1:2], 1), "%"))
+p2
+```
+
+![](README_files/figure-gfm/Visualize%20data-2.png)<!-- -->
+
 ### Sole arXiv authors
 
 How many preprints were sole-authored by a male versus a female academic
@@ -245,11 +253,18 @@ sole.long <- gather(sole.wide, year, number, `2018`:`2020`)
 sole.wide$per.dif.1920 <- (sole.wide$`2020`/sole.wide$`2019`)*100-100
 sole.wide$per.dif.1819 <- (sole.wide$`2019`/sole.wide$`2018`)*100-100
 
-p2 <- ggplot(data=sole.long, aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2018", "Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.15, 2.15),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+annotate("text", x=c(0.8, 1.8), y=c(620,2350), label = paste0("+", round(sole.wide$per.dif.1819[1:2], 1), "%"))+theme(legend.position="none")
-p2
+p3 <- ggplot(data=sole.long, aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2018", "Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.15, 2.15),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+annotate("text", x=c(0.8, 1.8), y=c(620,2350), label = paste0("+", round(sole.wide$per.dif.1819[1:2], 1), "%"))+theme(legend.position="none")
+p3
 ```
 
 ![](README_files/figure-gfm/Sole%20authors-1.png)<!-- -->
+
+``` r
+p4 <- ggplot(data=subset(sole.long, year != 2018), aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+theme(legend.position="none")
+p4
+```
+
+![](README_files/figure-gfm/Sole%20authors-2.png)<!-- -->
 
 ### Pre- and during-COVID-19 in the year 2020
 
@@ -272,8 +287,8 @@ min <- as.Date(as.character(covid.start), format="%Y-%m-%d")-length(unique(df.al
 arxiv.w.long$gender <- as.factor(arxiv.w.long$gender)
 levels(arxiv.w.long$gender) <- c("Female", "Male")
 
-p3 <- ggplot(data=subset(arxiv.w.long, year(week) == 2020), aes(color=gender, y=n, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(data=subset(arxiv.w.long, year(week) == 2020 & week != "2020-04-12"), aes(color=gender, y=n, x=week), se=FALSE)+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
-p3
+p5 <- ggplot(data=subset(arxiv.w.long, year(week) == 2020), aes(color=gender, y=n, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(data=subset(arxiv.w.long, year(week) == 2020 & week != "2020-04-12"), aes(color=gender, y=n, x=week), se=FALSE)+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
+p5
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
@@ -288,8 +303,8 @@ arxiv.m.long$pubs.per.day <- arxiv.m.long$n/arxiv.m.long$n.days
 arxiv.m.long$gender <- as.factor(arxiv.m.long$gender)
 levels(arxiv.m.long$gender) <- c("Female", "Male")
 
-p8 <- ggplot(data=arxiv.m.long, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)
-p8
+p6 <- ggplot(data=arxiv.m.long, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv: early 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)+theme(legend.position="none", plot.title = element_text(hjust = 0.5))
+p6
 ```
 
 ![](README_files/figure-gfm/2020%20analysis-2.png)<!-- -->
@@ -380,16 +395,25 @@ biorxiv.yr.long$year <- as.factor(biorxiv.yr.long$year)
 biorxiv.yr.wide$per.dif.1920 <- (biorxiv.yr.wide$`2020`/biorxiv.yr.wide$`2019`)*100-100
 biorxiv.yr.wide$per.dif.1819 <- (biorxiv.yr.wide$`2019`/biorxiv.yr.wide$`2018`)*100-100
 
-p4 <- ggplot(data=biorxiv.yr.long, aes(fill=as.factor(year), y=number, x=as.factor(gender)))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"))+ggtitle("bioRxiv: corresponding authors")+theme(plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.1,2.1),  y=c(1100,2650), label = paste0("+", round(biorxiv.yr.wide$per.dif.1920 ,1), "%"))+annotate("text", x=c(0.8,1.8),  y=c(900,2150), label = paste0("+", round(biorxiv.yr.wide$per.dif.1819,1), "%"))+theme(legend.position="none")
-p4
+p7 <- ggplot(data=biorxiv.yr.long, aes(fill=as.factor(year), y=number, x=as.factor(gender)))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"))+ggtitle("bioRxiv: corresponding authors")+theme(plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1.1,2.1),  y=c(1100,2650), label = paste0("+", round(biorxiv.yr.wide$per.dif.1920 ,1), "%"))+annotate("text", x=c(0.8,1.8),  y=c(900,2150), label = paste0("+", round(biorxiv.yr.wide$per.dif.1819,1), "%"))+theme(legend.position="none")
+p7
 ```
 
 ![](README_files/figure-gfm/Visualize%20biorxiv%20data-1.png)<!-- -->
 
 ``` r
-p5 <- plot_grid(p1, p2, p4, nrow=1)
-save_plot("plot.png", p5, base_height=8, base_width=16)
+p8 <- ggplot(data=subset(biorxiv.yr.long, year != 2018), aes(fill=as.factor(year), y=number, x=as.factor(gender)))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"))+ggtitle("bioRxiv: 2019 vs 2020")+theme(plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1,2),  y=c(1100,2650), label = paste0("+", round(biorxiv.yr.wide$per.dif.1920, 1), "%"))+theme(legend.position="none")
+p8
 ```
+
+![](README_files/figure-gfm/Visualize%20biorxiv%20data-2.png)<!-- -->
+
+``` r
+p9 <- plot_grid(p2, p4, p8, nrow=1)
+p9
+```
+
+![](README_files/figure-gfm/Visualize%20biorxiv%20data-3.png)<!-- -->
 
 ``` r
 biorxiv.d <- subset(df.b.all2020, !is.na(gender)) %>% group_by(date, gender) %>% summarize(n=n())
@@ -399,8 +423,8 @@ biorxiv.w <-biorxiv.d %>% group_by(week, gender) %>% summarize(sum=sum(n))
 biorxiv.w$gender <- as.factor(biorxiv.w$gender)
 levels(biorxiv.w$gender) <- c("Female", "Male")
 
-p6 <- ggplot(data=subset(biorxiv.w, year(week) == 2020), aes(color=gender, y=sum, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(span=1, se=FALSE)+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
-p6
+p10 <- ggplot(data=subset(biorxiv.w, year(week) == 2020), aes(color=gender, y=sum, x=week))+geom_rect(aes(xmin=as.Date(covid.start), xmax=as.Date("2020-04-22"), ymin=-Inf, ymax=Inf), alpha=0.2, fill="gainsboro", color="gainsboro")+geom_point()+geom_smooth(span=1, se=FALSE)+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Date")+ylab("Authors (no.)")+labs(color="Gender")
+p10
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
@@ -413,19 +437,26 @@ biorxiv.m <- subset(df.b.all2020, !is.na(gender)) %>% group_by(month, gender) %>
 biorxiv.m$gender <- as.factor(biorxiv.m$gender)
 levels(biorxiv.m$gender) <- c("Female", "Male")
 
-p7 <- ggplot(data=biorxiv.m, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv: 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)
-p7
+p11 <- ggplot(data=biorxiv.m, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv: early 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+facet_grid(~gender)+theme(legend.position="none", plot.title = element_text(hjust = 0.5))
+p11
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
 
 ``` r
-p8 <- plot_grid(p8, p7, nrow=1)
-p8
+p12 <- plot_grid(p6, p11, nrow=1)
+p12
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-1-3.png)<!-- -->
 
 ``` r
-save_plot("plot2.png", p8, base_height=8, base_width=16)
+p13 <- plot_grid(p9, p12, nrow=2)
+p13
+```
+
+![](README_files/figure-gfm/unnamed-chunk-1-4.png)<!-- -->
+
+``` r
+save_plot("figure.png", p13, base_height=16, base_width=16)
 ```
