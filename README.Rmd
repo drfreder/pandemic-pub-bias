@@ -2,7 +2,9 @@
 title: "COVID-19's gendered impact on academic productivity"
 author: "Megan Frederickson"
 date: "28/04/2020"
-output: github_document
+output: 
+  html_document:
+    keep_md: yes
 editor_options: 
   chunk_output_type: console
 ---
@@ -384,6 +386,8 @@ p7 <- plot_grid(p3, p6, nrow=1) #Combine into part of a single figure
 
 The numbers of male authors of bioRxiv preprints have increased steadily through early 2020, while numbers of female authors of bioRxiv preprints have increased only slightly. 
 
+I put it all together in a single figure. 
+
 ```{r, Combine visualizations, message=FALSE, warning=FALSE, fig.width=16, fig.height=16, dpi=300}
 
 p8 <- plot_grid(p5, p7, nrow=2)
@@ -392,6 +396,4 @@ p8
 save_plot("figure.png", p8, base_height=16, base_width=16)
 ```
 
-Throughout this analysis, effects are conservative because many preprints describe research completed months ago.
-
-In a ‘publish or perish’ world, it seems this pandemic could be setting back the hard-won progress of women in STEM.
+Throughout this analysis, effects are conservative because many preprints describe research completed months ago. However, the trends in both preprint servers are consistent with the hypothesis that the pandemic is disproportionately hurting the productivity of female scholars. How long this effect will persist, and what its downstream consequences might be for journal publications and academic careers, are open questions. In summary, in a ‘publish or perish’ world, it seems this pandemic could be setting back the hard-won progress of women in STEM.
