@@ -10,22 +10,22 @@ suggested the pandemic is disproportionately affecting the productivity
 of female academics, because women often do more caregiving than men.
 
 I quantified this effect by analyzing data on preprint submissions to
-arXiv (arxiv.org) and bioRxiv (biorxiv.org), two preprint servers that
-together cover many STEM fields. Peer review takes time, so it is still
-too soon to see COVID-19’s effects on the numbers of journal articles
-published by female versus male academics. However, a growing number of
-academics make their submitted or in-progress manuscripts available on
-preprint servers, meaning it might be possible to measure the pandemic’s
-effect on preprint submissions in real time.
+arXiv (<https://arxiv.org/>) and bioRxiv (<https://www.biorxiv.org/>),
+two preprint servers that together cover many STEM fields. Peer review
+takes time, so it is still too soon to see COVID-19’s effects on the
+numbers of journal articles published by female versus male academics.
+However, a growing number of academics make their submitted or
+in-progress manuscripts available on preprint servers, meaning it might
+be possible to measure the pandemic’s effect on preprint submissions in
+real time.
 
 ## arXiv submissions
 
-First, I scraped submission data from arXiv (<https://arxiv.org/>),
-which is the main preprint server for physics, math, computer science,
-statistics, and other quantitative disciplines. I used the aRxiv package
-to scrape the data, see:
+First, I scraped submission data from arXiv, a preprint server for
+physics, math, computer science, statistics, and other quantitative
+disciplines. I used the aRxiv package to scrape the data, see:
 
-Karthik Ram and Karl Broman (2019). aRxiv: Interface to the arXiv API. R
+Karthik, R. and K. Broman (2019). aRxiv: Interface to the arXiv API. R
 package version 0.5.19. <https://CRAN.R-project.org/package=aRxiv>
 
 I began by scraping all records for March 15-April 15, 2020, during the
@@ -128,29 +128,9 @@ n.update - length(df.update$id)
 write.csv(df.update, file="arxiv_update2020_data.csv")
 ```
 
-I then tidied the data by splitting strings of author names to identify
-the first and last author of each preprint.
+Next, I assigned gender to author names using the gender package, see:
 
-``` r
-#First tidy data for year-by-year comparison
-df.2020 <- read.csv("Data/arxiv_2020_data.csv") #Read in data
-df.2019 <- read.csv("Data/arxiv_2019_data.csv")
-df.2018 <- read.csv("Data/arxiv_2018_data.csv")
-df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
-
-#Next tidy data for 2020 comparison
-df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
-df.update <- read.csv("Data/arxiv_update2020_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update[, -1]) #Combine in one dataframe
-
-#Tidy dates
-df.full$year <- as.factor(year(as.Date(df.full$submitted))) #Extract year
-df.all2020$date <- as.factor(as.Date(df.all2020$submitted)) #Extract date
-```
-
-I assigned gender to author names using the gender package, see:
-
-Mullen L (2019). gender: Predict Gender from Names Using Historical
+Mullen, L. (2019). gender: Predict Gender from Names Using Historical
 Data. R package version 0.5.3, <https://github.com/ropensci/gender>.
 
 This package returns the probability that a name is male or female by
@@ -173,11 +153,21 @@ knitting this markdown document.
 
 ``` r
 #Not run
+#First compbine data for year-by-year comparison
+df.2020 <- read.csv("Data/arxiv_2020_data.csv") #Read in data
+df.2019 <- read.csv("Data/arxiv_2019_data.csv")
+df.2018 <- read.csv("Data/arxiv_2018_data.csv")
+df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 
-split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} 
+#Next combine data for 2020 comparison
+df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
+df.update <- read.csv("Data/arxiv_update2020_data.csv")
+df.all2020 <- rbind(df.2020, df.early2020, df.update[, -1]) #Combine in one dataframe
+
+split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Write a function to split strings of author names
 
 #For the year over year dataset
-df.full$split.names <- lapply(df.full$authors, split.names)
+df.full$split.names <- lapply(df.full$authors, split.names) #Apply function
 
 all_first_names <- word(unlist(df.full$split.names),1) #Make a list of all first author names
 gender <- gender(all_first_names, method = "ssa") #Assign gender
@@ -225,6 +215,7 @@ How many male versus female authors of preprints were there in Mar/Apr,
 ``` r
 df.full <- read.csv("Data/arxiv_full_gender.csv") #Read in data
 df.full <- df.full[!duplicated(df.full), ] #Remove duplicates
+df.full$year <- as.factor(year(as.Date(df.full$submitted))) #Extract year
 
 all <- as.data.frame(ungroup(df.full %>% group_by(year) %>% summarize(Female = sum(female.n, na.rm=TRUE), Male = sum(male.n, na.rm=TRUE)))) #Summarize by year
 all$total <- all$Female+all$Male #Total autthors
@@ -399,11 +390,8 @@ p4
 ![](README_files/figure-gfm/Visualize%20bioRxiv%202019%20versus%202020%20data-1.png)<!-- -->
 
 ``` r
-p5 <- plot_grid(p1, p2, p4, nrow=1) #Combine into a single figure
-p5
+p5 <- plot_grid(p1, p2, p4, nrow=1) #Combine into part of a single figure
 ```
-
-![](README_files/figure-gfm/Visualize%20bioRxiv%202019%20versus%202020%20data-2.png)<!-- -->
 
 The gender difference among corresponding authors for bioRxiv preprints
 is more modest than in the arXiv analysis, but the number of male
@@ -429,28 +417,26 @@ p6
 ![](README_files/figure-gfm/Visualize%20bioRxiv%202020%20data-1.png)<!-- -->
 
 ``` r
-p7 <- plot_grid(p3, p6, nrow=1)
-p7
+p7 <- plot_grid(p3, p6, nrow=1) #Combine into part of a single figure
 ```
 
-![](README_files/figure-gfm/Visualize%20bioRxiv%202020%20data-2.png)<!-- -->
+The numbers of male authors of bioRxiv preprints have increased steadily
+through early 2020, while numbers of female authors of bioRxiv preprints
+have increased only slightly.
 
 ``` r
 p8 <- plot_grid(p5, p7, nrow=2)
 p8
 ```
 
-![](README_files/figure-gfm/Visualize%20bioRxiv%202020%20data-3.png)<!-- -->
+![](README_files/figure-gfm/Combine%20visualizations-1.png)<!-- -->
 
 ``` r
 save_plot("figure.png", p8, base_height=16, base_width=16)
 ```
 
-The numbers of male authors of bioRxiv preprints have increased steadily
-through early 2020, while numbers of female authors of bioRxiv preprints
-have increased only slightly. (Throughout this analysis, effects are
-conservative because many preprints describe research completed months
-ago.)
+Throughout this analysis, effects are conservative because many
+preprints describe research completed months ago.
 
 In a ‘publish or perish’ world, it seems this pandemic could be setting
 back the hard-won progress of women in STEM.
