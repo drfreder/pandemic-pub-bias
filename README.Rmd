@@ -384,7 +384,7 @@ p7 <- plot_grid(p3, p6, nrow=1) #Combine into part of a single figure
 
 The numbers of male authors of bioRxiv preprints have increased steadily through early 2020, while numbers of female authors of bioRxiv preprints have increased only slightly. 
 
-```{r, Combine visualizations, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, dpi=300}
+```{r, Combine visualizations, message=FALSE, warning=FALSE, fig.width=16, fig.height=16, dpi=300}
 
 p8 <- plot_grid(p5, p7, nrow=2)
 p8
