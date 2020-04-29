@@ -262,6 +262,16 @@ arxiv.m.long$pubs.per.day <- arxiv.m.long$n/arxiv.m.long$n.days #Adjust for diff
 arxiv.m.long$gender <- as.factor(arxiv.m.long$gender) #Make sure gender is a factor
 levels(arxiv.m.long$gender) <- c("Female", "Male") #Capitalize genders
 
+
+#Compare Jan/Feb 2020 (immediately before pandemic) to Mar/Apr 2020 (during pandemic)
+a.fem.mar.apr <- (arxiv.m[arxiv.m$month == "2020-03-01", "female.n"]+arxiv.m[arxiv.m$month == "2020-04-01", "female.n"])/(arxiv.m[arxiv.m$month == "2020-03-01", "n.days"]+arxiv.m[arxiv.m$month == "2020-04-01", "n.days"])
+a.fem.jan.feb <- (arxiv.m[arxiv.m$month == "2020-02-01", "female.n"]+arxiv.m[arxiv.m$month == "2020-01-01", "female.n"])/(arxiv.m[arxiv.m$month == "2020-02-01", "n.days"]+arxiv.m[arxiv.m$month == "2020-01-01", "n.days"])
+a.fem.per.increase <- round((a.fem.mar.apr-a.fem.jan.feb)/a.fem.jan.feb*100, 1)
+
+a.m.mar.apr <- (arxiv.m[arxiv.m$month == "2020-03-01", "male.n"]+arxiv.m[arxiv.m$month == "2020-04-01", "male.n"])/(arxiv.m[arxiv.m$month == "2020-03-01", "n.days"]+arxiv.m[arxiv.m$month == "2020-04-01", "n.days"])
+a.m.jan.feb <- (arxiv.m[arxiv.m$month == "2020-02-01", "male.n"]+arxiv.m[arxiv.m$month == "2020-01-01", "male.n"])/(arxiv.m[arxiv.m$month == "2020-02-01", "n.days"]+arxiv.m[arxiv.m$month == "2020-01-01", "n.days"])
+a.m.per.increase <- round((a.m.mar.apr-a.m.jan.feb)/a.m.jan.feb*100, 1)
+
 #Make early 2020 figure
 p3 <- ggplot(data=arxiv.m.long, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv: early 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+labs(fill="Gender")+facet_grid(~gender)+theme(legend.position="none", plot.title = element_text(hjust = 0.5))
 p3
@@ -272,6 +282,11 @@ p3
 The number of male authors of arXiv preprints has increased through
 early 2020, while the number of female authors of arXiv preprints has
 almost plateaued during the pandemic.
+
+To put some numbers on this, bioRxiv preprints with female corresponding
+authors have increased 13.5% between Jan/Feb 2020 and Mar/Apr 2020,
+while bioRxiv preprints with male corresponding authors have increased
+16% over the same period.
 
 ## bioRxiv submissions
 
@@ -424,10 +439,12 @@ p7 <- plot_grid(p3, p6, nrow=1) #Combine into part of a single figure
 
 The number of male authors of bioRxiv preprints has increased steadily
 through early 2020, while the number of female authors of bioRxiv
-preprints has increased only slightly. To put some numbers on this,
-bioRxiv preprints with female corresponding authors have increased
+preprints has increased only slightly.
 
-from March/April, 2020, compared to January/February, 2020.
+To put some numbers on this, bioRxiv preprints with female corresponding
+authors have increased 11.3% between Jan/Feb 2020 and Mar/Apr 2020,
+while bioRxiv preprints with male corresponding authors have increased
+15.4% over the same period.
 
 Finally, I put it all together in a single figure.
 
