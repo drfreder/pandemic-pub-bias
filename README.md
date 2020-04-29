@@ -183,9 +183,9 @@ total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n)
 per.gender <- round(total.authors.with.gender/total.authors*100, 1)
 ```
 
-There are 90417 preprints in the arXiv dataset, with a total of
-4.3183310^{5} non-unique authors. I inferred the gender of 206642
-authors, or 47.9%, with the rest omitted from subsequent
+There are 90417 preprints in the arXiv dataset, with a total of 431833
+non-unique authors. I inferred the gender of 206642 authors, or 47.9%,
+with the rest omitted from subsequent
 analyses.
 
 ### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
