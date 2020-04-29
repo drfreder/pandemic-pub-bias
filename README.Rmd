@@ -2,7 +2,7 @@
 title: "COVID-19's gendered impact on academic productivity"
 author: "Megan Frederickson"
 date: "28/04/2020"
-output: html_document
+output: github_document
 editor_options: 
   chunk_output_type: console
 ---
