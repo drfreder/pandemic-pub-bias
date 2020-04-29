@@ -283,10 +283,10 @@ The number of male authors of arXiv preprints has increased through
 early 2020, while the number of female authors of arXiv preprints has
 almost plateaued during the pandemic.
 
-To put some numbers on this, arXiv preprints with female corresponding
-authors have increased 13.5% between Jan/Feb 2020 and Mar/Apr 2020,
-while bioRxiv preprints with male corresponding authors have increased
-16% over the same period.
+Percent changes do not appear on the figure, but arXiv preprints with
+female corresponding authors have increased 13.5% between Jan/Feb 2020
+and Mar/Apr 2020, while arXiv preprints with male corresponding authors
+have increased 16% over the same period.
 
 ## bioRxiv submissions
 
@@ -343,7 +343,7 @@ df.b.all2020 <- merge(df.b.all2020, gender, by.x = "cor.author.first.name",  by.
 df.b.all2020 <- df.b.all2020[!duplicated(df.b.all2020),] #Remove duplicated rows, if any
 ```
 
-Next I calculated some summary statistics for the arXiv dataset.
+Next I calculated some summary statistics for the bioRxiv dataset.
 
 ``` r
 all.biorxiv <- rbind(df.b.all2020, df.b.full)
@@ -357,11 +357,11 @@ total.b.authors.with.gender <- length(all.biorxiv[!is.na(all.biorxiv$gender), "g
 per.b.gender <- round(total.b.authors.with.gender/total.b.authors*100, 1)
 ```
 
-There are 18199 preprints in the bioRxiv dataset. Because the bioRxiv
-analysis focuses on corresponding authors only, and each preprint has a
-single corresponding author, there are also 18199 non-unique
-corresponding authors. I inferred the gender of 14618 corresponding
-authors, or 80.3%, with the rest omitted from subsequent
+There are 18199 preprints in the bioRxiv dataset for 2019-2020. Because
+the bioRxiv analysis focuses on corresponding authors only, and each
+preprint has a single corresponding author, there are also 18199
+non-unique corresponding authors. I inferred the gender of 14618
+corresponding authors, or 80.3%, with the rest omitted from subsequent
 analyses.
 
 ### Total numbers of bioRxiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
@@ -388,8 +388,8 @@ p4
 p5 <- plot_grid(p1, p2, p4, nrow=1) #Combine into part of a single figure
 ```
 
-The gender difference among corresponding authors for bioRxiv preprints
-is more modest than in the arXiv dataset, but the number of male
+The gender difference for corresponding authors of bioRxiv preprints is
+more modest than in the arXiv dataset, but the number of male
 corresponding authors of bioRxiv preprints has still increased more than
 the number of female corresponding authors of bioRxiv preprints, again
 both as a percent change and in absolute
@@ -441,10 +441,10 @@ The number of male authors of bioRxiv preprints has increased steadily
 through early 2020, while the number of female authors of bioRxiv
 preprints has increased only slightly.
 
-To put some numbers on this, bioRxiv preprints with female corresponding
-authors have increased 11.3% between Jan/Feb 2020 and Mar/Apr 2020,
-while bioRxiv preprints with male corresponding authors have increased
-15.4% over the same period.
+Again the percent change does not appear on the figure, but bioRxiv
+preprints with female corresponding authors have increased 11.3% between
+Jan/Feb 2020 and Mar/Apr 2020, while bioRxiv preprints with male
+corresponding authors have increased 15.4% over the same period.
 
 Finally, I put it all together in a single figure.
 
