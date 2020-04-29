@@ -283,7 +283,7 @@ The number of male authors of arXiv preprints has increased through
 early 2020, while the number of female authors of arXiv preprints has
 almost plateaued during the pandemic.
 
-To put some numbers on this, bioRxiv preprints with female corresponding
+To put some numbers on this, arXiv preprints with female corresponding
 authors have increased 13.5% between Jan/Feb 2020 and Mar/Apr 2020,
 while bioRxiv preprints with male corresponding authors have increased
 16% over the same period.
@@ -415,7 +415,7 @@ biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Female", "n.day
 fem.jan.feb <- (biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Female", "n"]+
 biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Female", "n"])/(biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Female", "n.days"]+
 biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Female", "n.days"])
-fem.per.increase <- (fem.mar.apr-fem.jan.feb)/fem.jan.feb*100
+fem.per.increase <- round((fem.mar.apr-fem.jan.feb)/fem.jan.feb*100,1)
 
 m.mar.apr <- (biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Male", "n"]+
 biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Male", "n"])/(biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Male", "n.days"]+
