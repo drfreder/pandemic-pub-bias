@@ -163,17 +163,40 @@ df.all2020.output <- as.data.frame(apply(df.all2020,2,as.character))
 write.csv(df.all2020.output, "Data/arxiv_all2020_gender.csv")
 ```
 
-### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
-
-How many male versus female authors of preprints were there in Mar/Apr,
-2020, compared to the same dates last year? Note: this is not the number
-of unique authors; it includes authors who submitted multiple preprints.
+First, let’s get some summary statistics for the arXiv dataset.
 
 ``` r
 df.full <- read.csv("Data/arxiv_full_gender.csv") #Read in data
 df.full <- df.full[!duplicated(df.full), ] #Remove duplicates, if any
-df.full$year <- as.factor(year(as.Date(df.full$submitted))) #Extract year
+df.full$author.n <- str_count(df.full$authors, pattern = "\\|")+1 #Count author number
 
+df.all2020 <- read.csv("Data/arxiv_all2020_gender.csv") #Read in data
+df.all2020 <- df.all2020[!duplicated(df.all2020), ] #Remove duplicated rows, if any
+df.all2020$author.n <- str_count(df.all2020$authors, pattern = "\\|")+1 #Count author number
+
+all.arxiv <- rbind(df.full, df.all2020)
+all.arxiv <- all.arxiv[!duplicated(all.arxiv), ]
+
+total.preprints <- length(all.arxiv$id)
+total.authors <- sum(all.arxiv$author.n)
+total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n)
+per.gender <- round(total.authors.with.gender/total.authors*100, 1)
+```
+
+There are 90417 preprints in the arXiv dataset, with a total of
+4.3183310^{5} non-unique authors. I inferred the gender of 206642
+authors, or 47.9%, with the rest omitted from subsequent
+analyses.
+
+### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
+
+How many male versus female authors of preprints were there in Mar/Apr,
+2020, compared to the same dates last year? Note: this is not the number
+of unique authors; it includes authors who submitted multiple
+preprints.
+
+``` r
+df.full$year <- as.factor(year(as.Date(df.full$submitted))) #Extract year
 all <- as.data.frame(ungroup(df.full %>% group_by(year) %>% summarize(Female = sum(female.n, na.rm=TRUE), Male = sum(male.n, na.rm=TRUE)))) #Summarize by year
 all$total <- all$Female+all$Male #Total authors
 all.long <- gather(all, Gender, number, Male:Female) #Make wide data long
@@ -202,7 +225,6 @@ academic in Mar/Apr, 2020, compared to the same dates last
 year?
 
 ``` r
-df.full$author.n <- str_count(df.full$authors, pattern = "\\|")+1 #Count author number
 sole.authors <- as.data.frame(ungroup(subset(df.full, author.n == 1) %>% group_by(year) %>% summarize(Female = sum(female.n, na.rm=TRUE), Male = sum(male.n, na.rm=TRUE)))) #Summarize by year
 sole.long <- gather(sole.authors, Gender, number, Male:Female) #Make wide data long
 sole.authors.t <- as.data.frame(t(sole.authors[,-1])) #Transpose
@@ -227,13 +249,10 @@ Next, I zoomed in on the months leading up to widespread stay-at-home
 orders and school and childcare closures that North Americans
 experienced beginning in late March or early April, 2020. (These
 measures were implemented to different degrees and on different dates in
-different parts of the world.)
+different parts of the
+world.)
 
 ``` r
-#All authors
-df.all2020 <- read.csv("Data/arxiv_all2020_gender.csv") #Read in data
-df.all2020 <- df.all2020[!duplicated(df.all2020), ] #Remove duplicated rows, if any
-
 df.all2020$month <- floor_date(as.Date(df.all2020$submitted), "month") #Bin by month
 arxiv.m <- as.data.frame(ungroup(df.all2020 %>% group_by(month) %>% summarize(female.n=sum(female.n, na.rm=TRUE), male.n=sum(male.n, na.rm=TRUE), n.days = length(unique(as.Date(submitted)))))) #Summarize by month
 arxiv.m.long <- gather(arxiv.m, gender, n, female.n:male.n) #Make wide data long
@@ -248,8 +267,8 @@ p3
 
 ![](README_files/figure-gfm/2020%20analysis-1.png)<!-- -->
 
-The numbers of male authors of arXiv preprints have increased through
-early 2020, while numbers of female authors of arXiv preprints have
+The number of male authors of arXiv preprints has increased through
+early 2020, while the number of female authors of arXiv preprints has
 almost plateaued during the pandemic.
 
 ## bioRxiv submissions
@@ -288,8 +307,6 @@ df.b.2019 <- read.csv("Data/biorxiv_2019_data.csv")
 df.b.all2020 <- read.csv("Data/biorxiv_2020_data.csv")
 
 df.b.full <- rbind(df.b.2018, df.b.2019, subset(df.b.all2020, as.Date(date) >= "2020-03-15" & as.Date(date) <= "2020-04-15")) #Make year comparison, subsetting 2020 data to just March 15 to April 15
-df.b.full$year <- as.factor(year(as.Date(df.b.full$date))) #Extract year
-df.b.all2020$date <- as.Date(df.b.all2020$date) #Make sure date column is in date format
 
 df.b.full$cor.author.first.name <- sapply(strsplit(as.character(df.b.full$author_corresponding), " "), head, 1) #Extract first names
 df.b.all2020$cor.author.first.name <- sapply(strsplit(as.character(df.b.all2020$author_corresponding), " "), head, 1) #Extract first names
@@ -309,13 +326,32 @@ df.b.all2020 <- merge(df.b.all2020, gender, by.x = "cor.author.first.name",  by.
 df.b.all2020 <- df.b.all2020[!duplicated(df.b.all2020),] #Remove duplicated rows, if any
 ```
 
+Let’s get some summary statistics for the arXiv dataset.
+
+``` r
+all.biorxiv <- rbind(df.b.all2020, df.b.full)
+all.biorxiv <- all.biorxiv[!duplicated(all.biorxiv), ]
+
+total.b.preprints <- length(all.biorxiv$doi)
+total.b.authors <- length(all.biorxiv$author_corresponding)
+total.b.authors.with.gender <- length(all.biorxiv[!is.na(all.biorxiv$gender), "gender"])
+per.b.gender <- round(total.b.authors.with.gender/total.b.authors*100, 1)
+```
+
+There are 20350 preprints in the bioRxiv dataset. Because the bioRxiv
+analysis focuses on corresponding authors only, and each preprint has a
+single corresponding author, there are also 20350 non-unique
+corresponding authors. I inferred the gender of 16401 corresponding
+authors, or 80.6%, with the rest omitted from subsequent
+analyses.
+
 ### Total numbers of bioRxiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
 
 How many male and female corresponding authors were there on bioRxiv
-preprints between Mar/Apr 2019 and
-2020?
+preprints between Mar/Apr 2019 and 2020?
 
 ``` r
+df.b.full$year <- as.factor(year(as.Date(df.b.full$date))) #Extract year
 biorxiv.yr <- as.data.frame(ungroup(subset(df.b.full, !is.na(gender)) %>% group_by(year, gender) %>% summarize(n=n()))) #Summarize by year
 biorxiv.yr$gender <- as.factor(biorxiv.yr$gender) #Make sure gender is a factor
 levels(biorxiv.yr$gender) <- c("Female", "Male") #Capitalize genders
@@ -347,11 +383,30 @@ months for early
 2020.
 
 ``` r
+df.b.all2020$date <- as.Date(df.b.all2020$date) #Make sure date column is in date format
 df.b.all2020$month <- floor_date(df.b.all2020$date, "month") #Bin by month
 biorxiv.m <- as.data.frame(ungroup(subset(df.b.all2020, !is.na(gender)) %>% group_by(month, gender) %>% summarize(n=n(), n.days = length(unique(date)), pubs.per.day = n/n.days))) #Summarize by month and gender
 biorxiv.m$gender <- as.factor(biorxiv.m$gender) #Make sure gender is a factor
 levels(biorxiv.m$gender) <- c("Female", "Male") #Capitalize genders
 
+#Compare Jan/Feb 2020 (immediately before pandemic) to Mar/Apr 2020 (during pandemic)
+fem.mar.apr <- (biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Female", "n"]+
+biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Female", "n"])/(biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Female", "n.days"]+
+biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Female", "n.days"])
+fem.jan.feb <- (biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Female", "n"]+
+biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Female", "n"])/(biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Female", "n.days"]+
+biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Female", "n.days"])
+fem.per.increase <- (fem.mar.apr-fem.jan.feb)/fem.jan.feb*100
+
+m.mar.apr <- (biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Male", "n"]+
+biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Male", "n"])/(biorxiv.m[biorxiv.m$month == "2020-03-01" & biorxiv.m$gender == "Male", "n.days"]+
+biorxiv.m[biorxiv.m$month == "2020-04-01" & biorxiv.m$gender == "Male", "n.days"])
+m.jan.feb <- (biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Male", "n"]+
+biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Male", "n"])/(biorxiv.m[biorxiv.m$month == "2020-01-01" & biorxiv.m$gender == "Male", "n.days"]+
+biorxiv.m[biorxiv.m$month == "2020-02-01" & biorxiv.m$gender == "Male", "n.days"])
+fem.per.increase <- round((fem.mar.apr-fem.jan.feb)/fem.jan.feb*100, 1)
+m.per.increase <- round((m.mar.apr-m.jan.feb)/m.jan.feb*100, 1)
+  
 #Make early 2020 figure
 p6 <- ggplot(data=biorxiv.m, aes(fill=gender, y=pubs.per.day, x=month))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv: early 2020")+xlab("Month")+ylab("Preprint authors per day (no.)")+facet_grid(~gender)+theme(legend.position="none", plot.title = element_text(hjust = 0.5))
 p6
@@ -363,9 +418,12 @@ p6
 p7 <- plot_grid(p3, p6, nrow=1) #Combine into part of a single figure
 ```
 
-The numbers of male authors of bioRxiv preprints have increased steadily
-through early 2020, while numbers of female authors of bioRxiv preprints
-have increased only slightly.
+The number of male authors of bioRxiv preprints has increased steadily
+through early 2020, while the number of female authors of bioRxiv
+preprints has increased only slightly. To put some numbers on this,
+bioRxiv preprints with female corresponding authors have increased
+
+from March/April, 2020, compared to January/February, 2020.
 
 Finally, I put it all together in a single figure.
 
