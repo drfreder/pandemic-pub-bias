@@ -2,7 +2,7 @@
 title: "COVID-19's gendered impact on academic productivity"
 author: "Megan Frederickson"
 date: "28/04/2020"
-output: github_document
+output: html_document
 editor_options: 
   chunk_output_type: console
 ---
@@ -42,94 +42,94 @@ I began by scraping all records for March 15-April 15, 2020, during the COVID-19
 
 #Not run
 #Get all submissions between March 15, 2020 and April 15, 2020 (during the COVID-19 pandemic)
-n.2020 <- arxiv_count(query = 'submittedDate:[20200315 TO 20200415]')
-n.2020.1 <- arxiv_count(query = 'submittedDate:[20200315 TO 20200321]') #Check number in date range
-df.2020.1 <- arxiv_search(query = 'submittedDate:[20200315 TO 20200321]', limit=n.2020, batchsize=1000)
+n.2020 <- arxiv_count(query = 'submittedDate:[202003150000 TO 202004152400]')
+n.2020.1 <- arxiv_count(query = 'submittedDate:[202003150000 TO 202003212400]') #Check number in date range
+df.2020.1 <- arxiv_search(query = 'submittedDate:[202003150000 TO 202003212400]', limit=n.2020, batchsize=1000)
 n.2020.1-length(df.2020.1$id) #Check that the right number of records were returned
-n.2020.2 <- arxiv_count(query = 'submittedDate:[20200322 TO 20200328]')
-df.2020.2 <- arxiv_search(query = 'submittedDate:[20200322 TO 20200328]', limit=n.2020, batchsize=1000)
+n.2020.2 <- arxiv_count(query = 'submittedDate:[202003220000 TO 202003282400]')
+df.2020.2 <- arxiv_search(query = 'submittedDate:[202003220000 TO 202003282400]', limit=n.2020, batchsize=1000)
 n.2020.2-length(df.2020.2$id) 
-n.2020.3 <- arxiv_count(query = 'submittedDate:[20200329 TO 20200403]')
-df.2020.3 <- arxiv_search(query = 'submittedDate:[20200329 TO 20200403]', limit=n.2020, batchsize=1000)
+n.2020.3 <- arxiv_count(query = 'submittedDate:[202003290000 TO 202004032400]')
+df.2020.3 <- arxiv_search(query = 'submittedDate:[202003290000 TO 202004032400]', limit=n.2020, batchsize=1000)
 n.2020.3-length(df.2020.3$id) 
-n.2020.4 <- arxiv_count(query = 'submittedDate:[20200404 TO 20200409]')
-df.2020.4 <- arxiv_search(query = 'submittedDate:[20200404 TO 20200409]', limit=n.2020, batchsize=1000)
+n.2020.4 <- arxiv_count(query = 'submittedDate:[202004040000 TO 202004092400]')
+df.2020.4 <- arxiv_search(query = 'submittedDate:[202004040000 TO 202004092400]', limit=n.2020, batchsize=1000)
 n.2020.4-length(df.2020.4$id) 
-n.2020.5 <- arxiv_count(query = 'submittedDate:[20200410 TO 20200412]')
-df.2020.5 <- arxiv_search(query = 'submittedDate:[20200410 TO 20200412]', limit=2000, batchsize=500)
+n.2020.5 <- arxiv_count(query = 'submittedDate:[202004100000 TO 202004121415]')
+df.2020.5 <- arxiv_search(query = 'submittedDate:[202004100000 TO 202004121415]', limit=n.2020, batchsize=2000)
 n.2020.5-length(df.2020.5$id) 
-n.2020.6 <- arxiv_count(query = 'submittedDate:[20200413 TO 20200415]')
-df.2020.6 <- arxiv_search(query = 'submittedDate:[20200413 TO 20200415]', limit=2000, batchsize=500)
+n.2020.6 <- arxiv_count(query = 'submittedDate:[202004121420 TO 202004152400]')
+df.2020.6 <- arxiv_search(query = 'submittedDate:[202004121420 TO 202004152400]', limit=n.2020, batchsize=1000)
 n.2020.6-length(df.2020.6$id) 
 df.2020.full <- rbind(df.2020.1, df.2020.2, df.2020.3, df.2020.4, df.2020.5, df.2020.6)
 n.2020-length(df.2020.full$id)
-write.csv(df.2020.full, file="arxiv_2020_data.csv")
+write.csv(df.2020.full, file="Data/arxiv_2020_data.csv")
 
 #Get all submission between March 15, 2019 and April 15, 2019 (the same dates last year)
-n.2019 <- arxiv_count(query = 'submittedDate:[20190315 TO 20190415]')
-n.2019.1 <- arxiv_count(query = 'submittedDate:[20190315 TO 20190322]')
-df.2019.1 <- arxiv_search(query = 'submittedDate:[20190315 TO 20190322]', limit=n.2019, batchsize=2000)
+n.2019 <- arxiv_count(query = 'submittedDate:[201903150000 TO 201904152400]')
+n.2019.1 <- arxiv_count(query = 'submittedDate:[201903150000 TO 201903222400]')
+df.2019.1 <- arxiv_search(query = 'submittedDate:[201903150000 TO 201903222400]', limit=n.2019, batchsize=2000)
 n.2019.1-length(df.2019.1$id)
-n.2019.2 <- arxiv_count(query = 'submittedDate:[20190323 TO 20190329]')
-df.2019.2 <- arxiv_search(query = 'submittedDate:[20190323 TO 20190329]', limit=n.2019, batchsize=2000)
+n.2019.2 <- arxiv_count(query = 'submittedDate:[201903230000 TO 201903292400]')
+df.2019.2 <- arxiv_search(query = 'submittedDate:[201903230000 TO 201903292400]', limit=n.2019, batchsize=2000)
 n.2019.2-length(df.2019.2$id)
-n.2019.3 <- arxiv_count(query = 'submittedDate:[20190330 TO 20190405]')
-df.2019.3 <- arxiv_search(query = 'submittedDate:[20190330 TO 20190405]', limit=n.2019, batchsize=2000)
+n.2019.3 <- arxiv_count(query = 'submittedDate:[201903300000 TO 201904052400]')
+df.2019.3 <- arxiv_search(query = 'submittedDate:[201903300000 TO 201904052400]', limit=n.2019, batchsize=2000)
 n.2019.3-length(df.2019.3$id)
-n.2019.4 <- arxiv_count(query = 'submittedDate:[20190406 TO 20190412]')
-df.2019.4 <- arxiv_search(query = 'submittedDate:[20190406 TO 20190412]', limit=n.2019, batchsize=2000)
+n.2019.4 <- arxiv_count(query = 'submittedDate:[201904060000 TO 201904122400]')
+df.2019.4 <- arxiv_search(query = 'submittedDate:[201904060000 TO 201904122400]', limit=n.2019, batchsize=2000)
 n.2019.4-length(df.2019.4$id)
-n.2019.5 <- arxiv_count(query = 'submittedDate:[20190413 TO 20190415]')
-df.2019.5 <- arxiv_search(query = 'submittedDate:[20190413 TO 20190415]', limit=n.2019, batchsize=2000)
+n.2019.5 <- arxiv_count(query = 'submittedDate:[201904130000 TO 201904152400]')
+df.2019.5 <- arxiv_search(query = 'submittedDate:[201904130000 TO 201904152400]', limit=n.2019, batchsize=2000)
 n.2019.5-length(df.2019.5$id)
 df.2019.full <- rbind(df.2019.1, df.2019.2, df.2019.3, df.2019.4, df.2019.5)
 n.2019-length(df.2019.full$id)
-write.csv(df.2019.full, file="arxiv_2019_data.csv")
+write.csv(df.2019.full, file="Data/arxiv_2019_data.csv")
 
 #Get all submissions between March 15, 2018 and April 15, 2018 (same dates two years ago)
-n.2018 <- arxiv_count(query = 'submittedDate:[20180315 TO 20180415]')
-n.2018.1 <- arxiv_count(query = 'submittedDate:[20180315 TO 20180321]')
-df.2018.1 <- arxiv_search(query = 'submittedDate:[20180315 TO 20180321]', limit=n.2018, batchsize=2000)
+n.2018 <- arxiv_count(query = 'submittedDate:[201803150000 TO 201804152400]')
+n.2018.1 <- arxiv_count(query = 'submittedDate:[201803150000 TO 201803212400]')
+df.2018.1 <- arxiv_search(query = 'submittedDate:[201803150000 TO 201803212400]', limit=n.2018, batchsize=2000)
 n.2018.1-length(df.2018.1$id)
-n.2018.2 <- arxiv_count(query = 'submittedDate:[20180322 TO 20180403]')
-df.2018.2 <- arxiv_search(query = 'submittedDate:[20180322 TO 20180403]', limit=n.2018, batchsize=2000)
+n.2018.2 <- arxiv_count(query = 'submittedDate:[201803220000 TO 201804032400]')
+df.2018.2 <- arxiv_search(query = 'submittedDate:[201803220000 TO 201804032400]', limit=n.2018, batchsize=2000)
 n.2018.2-length(df.2018.2$id)
-n.2018.3 <- arxiv_count(query = 'submittedDate:[20180404 TO 20180409]')
-df.2018.3 <- arxiv_search(query = 'submittedDate:[20180404 TO 20180409]', limit=n.2018, batchsize=2000)
+n.2018.3 <- arxiv_count(query = 'submittedDate:[201804040000 TO 201804092400]')
+df.2018.3 <- arxiv_search(query = 'submittedDate:[201804040000 TO 201804092400]', limit=n.2018, batchsize=2000)
 n.2018.3-length(df.2018.3$id)
-n.2018.4 <- arxiv_count(query = 'submittedDate:[20180410 TO 20180415]')
-df.2018.4 <- arxiv_search(query = 'submittedDate:[20180410 TO 20180415]', limit=2000, batchsize=2000)
+n.2018.4 <- arxiv_count(query = 'submittedDate:[201804100000 TO 201804152400]')
+df.2018.4 <- arxiv_search(query = 'submittedDate:[201804100000 TO 201804152400]', limit=n.2018, batchsize=2000)
 n.2018.4-length(df.2018.4$id)
 df.2018.full <- rbind(df.2018.1, df.2018.2, df.2018.3, df.2018.4)
 n.2018-length(df.2018.full$id)
-write.csv(df.2018.full, file="arxiv_2018_data.csv")
+write.csv(df.2018.full, file="Data/arxiv_2018_data.csv")
 
 #Get all submissions between Jan. 1, 2020 and March 15, 2020 (before COVID-19 pandemic)
-n.early2020 <- arxiv_count(query = 'submittedDate:[20200101 TO 20200315]')
-n.early2020.1 <- arxiv_count(query = 'submittedDate:[20200101 TO 20200115]')
-df.early2020.1 <- arxiv_search(query = 'submittedDate:[20200101 TO 20200115]', limit=n.early2020, batchsize=2000)
+n.early2020 <- arxiv_count(query = 'submittedDate:[202001010000 TO 202003152400]')
+n.early2020.1 <- arxiv_count(query = 'submittedDate:[202001010000 TO 202001152400]')
+df.early2020.1 <- arxiv_search(query = 'submittedDate:[202001010000 TO 202001152400]', limit=n.early2020, batchsize=2000)
 n.early2020.1 - length(df.early2020.1$id)
-n.early2020.2 <- arxiv_count(query = 'submittedDate:[20200116 TO 20200131]')
-df.early2020.2 <- arxiv_search(query = 'submittedDate:[20200116 TO 20200131]', limit=n.early2020, batchsize=2000)
+n.early2020.2 <- arxiv_count(query = 'submittedDate:[202001160000 TO 202001312400]')
+df.early2020.2 <- arxiv_search(query = 'submittedDate:[202001160000 TO 202001312400]', limit=n.early2020, batchsize=2000)
 n.early2020.2 - length(df.early2020.2$id)
-n.early2020.3 <- arxiv_count(query = 'submittedDate:[20200201 TO 20200215]')
-df.early2020.3 <- arxiv_search(query = 'submittedDate:[20200201 TO 20200215]', limit=n.early2020, batchsize=2000)
+n.early2020.3 <- arxiv_count(query = 'submittedDate:[202002010000 TO 202002152400]')
+df.early2020.3 <- arxiv_search(query = 'submittedDate:[202002010000 TO 202002152400]', limit=n.early2020, batchsize=2000)
 n.early2020.3 - length(df.early2020.3$id)
-n.early2020.4 <- arxiv_count(query = 'submittedDate:[20200216 TO 20200229]')
-df.early2020.4 <- arxiv_search(query = 'submittedDate:[20200216 TO 20200229]', limit=n.early2020, batchsize=2000)
+n.early2020.4 <- arxiv_count(query = 'submittedDate:[202002160000 TO 202002292400]')
+df.early2020.4 <- arxiv_search(query = 'submittedDate:[202002160000 TO 202002292400]', limit=n.early2020, batchsize=2000)
 n.early2020.4 - length(df.early2020.4$id)
-n.early2020.5 <- arxiv_count(query = 'submittedDate:[20200301 TO 20200315]')
-df.early2020.5 <- arxiv_search(query = 'submittedDate:[20200301 TO 20200315]', limit=n.early2020, batchsize=2000)
+n.early2020.5 <- arxiv_count(query = 'submittedDate:[202003010000 TO 202003152400]')
+df.early2020.5 <- arxiv_search(query = 'submittedDate:[202003010000 TO 202003152400]', limit=n.early2020, batchsize=2000)
 n.early2020.5 - length(df.early2020.5$id)
 df.early2020.full <- rbind(df.early2020.1, df.early2020.2, df.early2020.3, df.early2020.4, df.early2020.5)
 n.early2020-length(df.early2020.full$id)
-write.csv(df.early2020.full, file="arxiv_early2020_data.csv")
+write.csv(df.early2020.full, file="Data/arxiv_early2020_data.csv")
 
 #Get all submissions between Apr. 16, 2020 and April 22, 2020 (update analysis with most recent data)
-n.update <- arxiv_count(query = 'submittedDate:[20200416 TO 20200422]')
-df.update <- arxiv_search(query = 'submittedDate:[20200416 TO 20200422]', limit=n.update, batchsize=2000)
+n.update <- arxiv_count(query = 'submittedDate:[202004160000 TO 202004222400]')
+df.update <- arxiv_search(query = 'submittedDate:[202004160000 TO 202004222400]', limit=n.update, batchsize=2000)
 n.update - length(df.update$id)
-write.csv(df.update, file="arxiv_update2020_data.csv")
+write.csv(df.update, file="Data/arxiv_update2020_data.csv")
 ```
  
 Next, I assigned gender to author names using the gender package, see:
@@ -154,7 +154,7 @@ df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 #Next combine data for 2020 comparison
 df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
 df.update <- read.csv("Data/arxiv_update2020_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update[, -1]) #Combine in one dataframe
+df.all2020 <- rbind(df.2020, df.early2020, df.update) #Combine in one dataframe
 
 split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Write a function to split strings of author names
 
@@ -176,14 +176,13 @@ for(i in 1:length(df.full$authors)){
 }
 
 df.full.output <- as.data.frame(apply(df.full,2,as.character))
-write.csv(df.full.output, "arxiv_full_gender.csv")
+write.csv(df.full.output, "Data/arxiv_full_gender.csv")
 
 #Same for the all 2020 dataset
 df.all2020$split.names <- lapply(df.all2020$authors, split.names)
 
 tmp <- NULL
 all_first_names <- word(unlist(df.all2020$split.names),1)
-head(all_first_names)
 gender <- gender(all_first_names, method = "ssa")
 gender <- unique(gender[ , c(1,2,4)])
 
@@ -196,7 +195,7 @@ for(i in 1:length(df.all2020$authors)){
 }
 
 df.all2020.output <- as.data.frame(apply(df.all2020,2,as.character))
-write.csv(df.all2020.output, "arxiv_all2020_gender.csv")
+write.csv(df.all2020.output, "Data/arxiv_all2020_gender.csv")
 
 ```
 
@@ -218,7 +217,7 @@ colnames(all.t) <- c("2018", "2019", "2020") #Fix column names
 all.t$per.dif.1920 <- (all.t$`2020`/all.t$`2019`*100)-100 #Calculate percent change, 2020 over 2019
 
 #Just compare 2019 and 2020
-p1 <- ggplot(data=subset(all.long, year != 2018), aes(fill=as.factor(year), y=number, x=Gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, all authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(6850,23900), label = paste0("+", round(all.t$per.dif.1920[1:2], 1), "%"))
+p1 <- ggplot(data=subset(all.long, year != 2018), aes(fill=as.factor(year), y=number, x=Gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, all authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(8500,29000), label = paste0("+", round(all.t$per.dif.1920[1:2], 1), "%"))
 p1
 
 ```
@@ -239,12 +238,12 @@ sole.wide$gender <- ifelse(sole.wide$male.n == 0, "Female", "Male")
 sole.long <- gather(sole.wide, year, number, `2018`:`2020`)
 sole.wide$per.dif.1920 <- (sole.wide$`2020`/sole.wide$`2019`)*100-100
 
-p2 <- ggplot(data=subset(sole.long, year != 2018), aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(680,2600), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+theme(legend.position="none")
+p2 <- ggplot(data=subset(sole.long, year != 2018), aes(fill=as.factor(year), y=number, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+scale_fill_manual(values = wes_palette("Royal1"), labels=c("Mar/Apr 2019", "Mar/Apr 2020"))+ggtitle("arXiv: 2019 vs 2020, sole authors")+theme(legend.position = c(0.1, 0.9), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+annotate("text", x=c(1, 2),  y=c(880,3150), label = paste0("+", round(sole.wide$per.dif.1920[1:2], 1), "%"))+theme(legend.position="none")
 p2
 
 ```
 
-Single-authored arXiv submissions are also up overall, but again the number of male authors is currently growing faster than the number of female authors, again both as a percent change and in absolute terms. 
+Single-authored arXiv submissions are also up overall, but again the number of male authors is currently growing faster than the number of female authors, both as a percent change and in absolute terms. 
 
 ### arXiv: pre- and during-COVID-19 in the year 2020
 
@@ -281,27 +280,16 @@ I scraped all records for March 15-April 15, 2020, during the COVID-19 pandemic,
 ```{r Scrape biorxiv,  message=FALSE, warning=FALSE, eval=FALSE}
 
 #Not run
-#Get all submissions between March 15, 2020 and April 15, 2020 (during the COVID-19 pandemic)
-df.b.2020 <- biorxiv_content(from = "2020-03-15", to = "2020-04-15", limit = "*", format = "df")
-df.b.2020.6 <- biorxiv_content(from = "2020-04-16", to = "2020-04-22", limit = "*", format = "df")
-#Get all submissions between Jan. 1, 2019 and Mar 15, 2020 (before the COVID-19 pandemic)
-df.b.2020.2 <- biorxiv_content(from = "2020-02-15", to = "2020-02-29", limit = "*", format = "df")
-df.b.2020.3 <- biorxiv_content(from = "2020-03-01", to = "2020-03-15", limit = "*", format = "df")
-df.b.2020v2 <- rbind(df.b.2020.2, df.b.2020.3)
-df.b.2020.4 <- biorxiv_content(from = "2020-01-15", to = "2020-02-15", limit = "*", format = "df")
-df.b.2020.5 <- biorxiv_content(from = "2020-01-01", to = "2020-01-14", limit = "*", format = "df")
-#Get all submissions for same dates in 2019
+#Get all submissions between Jan 1, 2020 and April 22, 2020
+df.b.2020 <- biorxiv_content(from = "2020-01-01", to = "2020-04-22", limit = "*", format = "df")
+#Get all submissions for March 15 to April 15, 2019
 df.b.2019 <- biorxiv_content(from = "2019-03-15", to = "2019-04-15", limit = "*", format = "df")
-#Get all submissions for same dates in 2018
+#Get all submissions for March 15 to April 15, 2018
 df.b.2018 <- biorxiv_content(from = "2018-03-15", to = "2018-04-15", limit = "*", format = "df")
 
-write.csv(df.b.2019, "biorxiv_2019_data.csv")
-write.csv(df.b.2020, "biorxiv_2020_data.csv")
-write.csv(df.b.2018, "biorxiv_2018_data.csv")
-write.csv(df.b.2020v2, "biorxiv_FebMar2020_data.csv")
-write.csv(df.b.2020.4, "biorxiv_JanFeb2020_data.csv")
-write.csv(df.b.2020.5, "biorxiv_earlyJan2020_data.csv")
-write.csv(df.b.2020.6, "biorxiv_Apr16toApr22_data.csv")
+write.csv(df.b.2020, "Data/biorxiv_2020_data.csv")
+write.csv(df.b.2019, "Data/biorxiv_2019_data.csv")
+write.csv(df.b.2018, "Data/biorxiv_2018_data.csv")
 
 ```
 
@@ -311,14 +299,9 @@ I then inferred the gender of corresponding authors of bioRxiv preprints, as abo
 
 df.b.2018 <- read.csv("Data/biorxiv_2018_data.csv")
 df.b.2019 <- read.csv("Data/biorxiv_2019_data.csv")
-df.b.2020 <- read.csv("Data/biorxiv_2020_data.csv")
-df.b.2020v1 <- read.csv("Data/biorxiv_earlyJan2020_data.csv")
-df.b.2020v2 <- read.csv("Data/biorxiv_FebMar2020_data.csv")
-df.b.2020v3 <- read.csv("Data/biorxiv_JanFeb2020_data.csv")
-df.b.2020v4 <- read.csv("Data/biorxiv_Apr16toApr22_data.csv")
+df.b.all2020 <- read.csv("Data/biorxiv_2020_data.csv")
 
-df.b.full <- rbind(df.b.2018, df.b.2019, df.b.2020)
-df.b.all2020 <- rbind(df.b.2020v2, df.b.2020v3, df.b.2020v4, df.b.2020v1, df.b.2020)
+df.b.full <- rbind(df.b.2018, df.b.2019, subset(df.b.all2020, as.Date(date) >= "2020-03-15" & as.Date(date) <= "2020-04-15"))
 
 df.b.full$year <- as.factor(year(as.Date(df.b.full$date)))
 
@@ -362,7 +345,7 @@ p5 <- plot_grid(p1, p2, p4, nrow=1) #Combine into part of a single figure
 
 ```
 
-The gender difference among corresponding authors for bioRxiv preprints is more modest than in the arXiv analysis, but the number of male corresponding authors of bioRxiv preprints has still increased more than the number of female corresponding authors of bioRxiv preprints, year over year. 
+The gender difference among corresponding authors for bioRxiv preprints is more modest than in the full arXiv dataset, but the number of male corresponding authors of bioRxiv preprints has still increased more than the number of female corresponding authors of bioRxiv preprints, year over year. 
 
 ### bioRxiv: pre- and during-COVID-19 in the year 2020
 
