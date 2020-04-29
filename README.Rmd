@@ -71,7 +71,7 @@ df.2018.full <- rbind(df.2018.1, df.2018.2, df.2018.3, df.2018.4)
 n.2018-length(df.2018.full$id)
 write.csv(df.2018.full, file="Data/arxiv_2018_data.csv")
 
-#Get all submissions between Jan. 1, 2020 and March 15, 2020 (before COVID-19 pandemic)
+#Get all submissions between Jan. 1, 2020 and March 15, 2020
 n.early2020 <- arxiv_count(query = 'submittedDate:[202001010000 TO 202003152400]')
 df.early2020.1 <- arxiv_search(query = 'submittedDate:[202001010000 TO 202001152400]', limit=n.early2020, batchsize=2000)
 df.early2020.2 <- arxiv_search(query = 'submittedDate:[202001160000 TO 202001312400]', limit=n.early2020, batchsize=2000)
@@ -154,7 +154,7 @@ df.all2020.output <- as.data.frame(apply(df.all2020,2,as.character))
 write.csv(df.all2020.output, "Data/arxiv_all2020_gender.csv")
 ```
 
-First, let's get some summary statistics for the arXiv dataset.
+Next, I calculated some summary statistics for the arXiv dataset.
 
 ```{r Summarize arxiv dataset, message=FALSE, warning=FALSE}
 df.full <- read.csv("Data/arxiv_full_gender.csv") #Read in data
@@ -165,16 +165,18 @@ df.all2020 <- read.csv("Data/arxiv_all2020_gender.csv") #Read in data
 df.all2020 <- df.all2020[!duplicated(df.all2020), ] #Remove duplicated rows, if any
 df.all2020$author.n <- str_count(df.all2020$authors, pattern = "\\|")+1 #Count author number
 
-all.arxiv <- rbind(df.full, df.all2020)
-all.arxiv <- all.arxiv[!duplicated(all.arxiv), ]
+all.arxiv <- rbind(df.full, df.all2020) #Combine datasets
+all.arxiv <- all.arxiv[!duplicated(all.arxiv), ] #Remove duplicates
 
-total.preprints <- length(all.arxiv$id)
-total.authors <- sum(all.arxiv$author.n)
-total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n)
-per.gender <- round(total.authors.with.gender/total.authors*100, 1)
+all.arxiv$year <- as.factor(year(as.Date(all.arxiv$submitted))) #Extract year
+all.arxiv <- subset(all.arxiv, year != 2018)
+total.preprints <- length(all.arxiv$id) #Total number of preprints
+total.authors <- sum(all.arxiv$author.n) #Total number of authors
+total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n) #Total number of authors with gender inferred
+per.gender <- round(total.authors.with.gender/total.authors*100, 1) #Percent of authors with gender
 ```
 
-There are `r total.preprints` preprints in the arXiv dataset, with a total of `r format(total.authors, scientific=FALSE)` non-unique authors. I inferred the gender of `r total.authors.with.gender` authors, or `r per.gender`%, with the rest omitted from subsequent analyses. 
+There are `r total.preprints` preprints in the arXiv dataset for 2019-2020, with a total of `r format(total.authors, scientific=FALSE)` non-unique authors. I inferred the gender of `r total.authors.with.gender` authors, or `r per.gender`%, with the rest omitted from subsequent analyses. 
 
 ### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
 
@@ -282,12 +284,14 @@ df.b.all2020 <- merge(df.b.all2020, gender, by.x = "cor.author.first.name",  by.
 df.b.all2020 <- df.b.all2020[!duplicated(df.b.all2020),] #Remove duplicated rows, if any
 ```
 
-Let's get some summary statistics for the arXiv dataset.
+Next I calculated some summary statistics for the arXiv dataset.
 
 ```{r Summary statistics for biorxiv, message=FALSE, warning=FALSE}
 all.biorxiv <- rbind(df.b.all2020, df.b.full)
 all.biorxiv <- all.biorxiv[!duplicated(all.biorxiv), ]
 
+all.biorxiv$year <- as.factor(year(as.Date(all.biorxiv$date)))
+all.biorxiv <- subset(all.biorxiv, year != 2018)
 total.b.preprints <- length(all.biorxiv$doi)
 total.b.authors <- length(all.biorxiv$author_corresponding)
 total.b.authors.with.gender <- length(all.biorxiv[!is.na(all.biorxiv$gender), "gender"])
