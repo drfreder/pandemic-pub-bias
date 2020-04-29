@@ -5,9 +5,10 @@ Megan Frederickson
 
 With schools and daycares closed because of COVID-19, many academics are
 currently working from home with their kids underfoot. Writing in
-Nature, Minello (<https://www.nature.com/articles/d41586-020-01135-9>)
-suggested the pandemic is disproportionately affecting the productivity
-of female academics, because women often do more caregiving than men.
+Nature, \[Minello\]
+(<https://www.nature.com/articles/d41586-020-01135-9>) suggested the
+pandemic is disproportionately affecting the productivity of female
+academics, because women often do more caregiving than men.
 
 I quantified this effect by analyzing data on preprint submissions to
 arXiv (<https://arxiv.org/>) and bioRxiv (<https://www.biorxiv.org/>),

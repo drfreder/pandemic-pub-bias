@@ -11,7 +11,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-With schools and daycares closed because of COVID-19, many academics are currently working from home with their kids underfoot. Writing in Nature, Minello (https://www.nature.com/articles/d41586-020-01135-9) suggested the pandemic is disproportionately affecting the productivity of female academics, because women often do more caregiving than men. 
+With schools and daycares closed because of COVID-19, many academics are currently working from home with their kids underfoot. Writing in Nature, [Minello] (https://www.nature.com/articles/d41586-020-01135-9) suggested the pandemic is disproportionately affecting the productivity of female academics, because women often do more caregiving than men. 
 
 I quantified this effect by analyzing data on preprint submissions to arXiv (https://arxiv.org/) and bioRxiv (https://www.biorxiv.org/), two preprint servers that together cover many STEM fields. Peer review takes time, so it is still too soon to see COVID-19’s effects on the numbers of journal articles published by female versus male academics. However, a growing number of academics make their submitted or in-progress manuscripts available on preprint servers, meaning it might be possible to measure the pandemic’s effect on preprint submissions in real time. 
 
