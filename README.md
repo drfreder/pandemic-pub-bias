@@ -1,7 +1,7 @@
 COVID-19’s gendered impact on academic productivity
 ================
 Megan Frederickson
-28/04/2020
+05/05/2020
 
 With schools and daycares closed because of COVID-19, many academics are
 currently working from home with their kids underfoot. Writing in
@@ -87,7 +87,7 @@ write.csv(df.update, file="Data/arxiv_update2020_data.csv")
 n.update.2 <- arxiv_count(query = 'submittedDate:[202004230000 TO 202004302400]')
 df.update.2 <- arxiv_search(query = 'submittedDate:[202004230000 TO 202004302400]', limit=n.update.2, batchsize=2000)
 n.update.2 - length(df.update.2$id)
-write.csv(df.update, file="Data/arxiv_update2020_2_data.csv")
+write.csv(df.update.2, file="Data/arxiv_update2020_2_data.csv")
 ```
 
 Next, I assigned gender to author names using the gender package, see:
@@ -125,7 +125,7 @@ df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
 df.update <- read.csv("Data/arxiv_update2020_data.csv")
 df.update.2 <- read.csv("Data/arxiv_update2020_2_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2[, -1]) #Combine in one dataframe
+df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2) #Combine in one dataframe
 
 split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Function to split strings of author names
 
@@ -191,9 +191,9 @@ total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n) #Total num
 per.gender <- round(total.authors.with.gender/total.authors*100, 1) #Percent of authors with gender
 ```
 
-There are 82434 preprints in the arXiv dataset for 2019-2020, with a
-total of 399932 non-unique authors. I inferred the gender of 190636
-authors, or 47.7%, with the rest omitted from subsequent
+There are 83118 preprints in the arXiv dataset for 2019-2020, with a
+total of 399769 non-unique authors. I inferred the gender of 192332
+authors, or 48.1%, with the rest omitted from subsequent
 analyses.
 
 ### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
@@ -320,9 +320,9 @@ preprints has plateaued (March) or increasingly more modestly (April)
 during the pandemic.
 
 Percent changes do not appear on the figure, but arXiv preprints with
-female corresponding authors have increased 30.5% between Jan/Feb 2020
+female corresponding authors have increased 17.2% between Jan/Feb 2020
 and Mar/Apr 2020, while arXiv preprints with male corresponding authors
-have increased 32.9% over the same period.
+have increased 18.2% over the same period.
 
 The same data, but in tabular form:
 
@@ -337,11 +337,11 @@ kable(arxiv.m.long)
 | 2020-01-01      |             31 | Female |                                            5626 |                                               181.4839 |
 | 2020-02-01      |             29 | Female |                                            6226 |                                               214.6897 |
 | 2020-03-01      |             31 | Female |                                            6652 |                                               214.5806 |
-| 2020-04-01      |             22 | Female |                                            7010 |                                               318.6364 |
+| 2020-04-01      |             30 | Female |                                            7470 |                                               249.0000 |
 | 2020-01-01      |             31 | Male   |                                           21073 |                                               679.7742 |
 | 2020-02-01      |             29 | Male   |                                           23920 |                                               824.8276 |
 | 2020-03-01      |             31 | Male   |                                           26048 |                                               840.2581 |
-| 2020-04-01      |             22 | Male   |                                           26772 |                                              1216.9091 |
+| 2020-04-01      |             30 | Male   |                                           28008 |                                               933.6000 |
 
 ## bioRxiv submissions
 

@@ -1,7 +1,7 @@
 ---
 title: "COVID-19's gendered impact on academic productivity"
 author: "Megan Frederickson"
-date: "28/04/2020"
+date: "05/05/2020"
 output: github_document
 editor_options: 
   chunk_output_type: console
@@ -91,7 +91,7 @@ write.csv(df.update, file="Data/arxiv_update2020_data.csv")
 n.update.2 <- arxiv_count(query = 'submittedDate:[202004230000 TO 202004302400]')
 df.update.2 <- arxiv_search(query = 'submittedDate:[202004230000 TO 202004302400]', limit=n.update.2, batchsize=2000)
 n.update.2 - length(df.update.2$id)
-write.csv(df.update, file="Data/arxiv_update2020_2_data.csv")
+write.csv(df.update.2, file="Data/arxiv_update2020_2_data.csv")
 ```
  
 Next, I assigned gender to author names using the gender package, see:
@@ -116,7 +116,7 @@ df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
 df.update <- read.csv("Data/arxiv_update2020_data.csv")
 df.update.2 <- read.csv("Data/arxiv_update2020_2_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2[, -1]) #Combine in one dataframe
+df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2) #Combine in one dataframe
 
 split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Function to split strings of author names
 
