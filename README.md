@@ -213,6 +213,21 @@ p1
 
 ![](README_files/figure-gfm/Visualize%20data-1.png)<!-- -->
 
+The same data, but in tabular form:
+
+``` r
+#Or in tabular form
+colnames(all.long) <- c("Year", "Total preprints submitted", "Gender", "Number of preprints submittted, by gender")
+kable(subset(all.long, Year != 2018))
+```
+
+|   | Year | Total preprints submitted | Gender | Number of preprints submittted, by gender |
+| - | :--- | ------------------------: | :----- | ----------------------------------------: |
+| 2 | 2019 |                     32736 | Male   |                                     25768 |
+| 3 | 2020 |                     34573 | Male   |                                     27416 |
+| 5 | 2019 |                     32736 | Female |                                      6968 |
+| 6 | 2020 |                     34573 | Female |                                      7157 |
+
 arXiv preprint submissions are up overall, but the number of male
 authors is currently growing faster than the number of female authors.
 Comparing preprint submissions in late March and early April 2020 to the
@@ -240,6 +255,21 @@ p2
 
 ![](README_files/figure-gfm/Sole%20authors-1.png)<!-- -->
 
+The same data, but in tabular form:
+
+``` r
+#Or in tabular form
+colnames(sole.long) <- c("Year", "Gender", "Number of single-authored preprints submittted, by gender")
+kable(subset(sole.long, Year != 2018))
+```
+
+|   | Year | Gender | Number of single-authored preprints submittted, by gender |
+| - | :--- | :----- | --------------------------------------------------------: |
+| 2 | 2019 | Male   |                                                      1161 |
+| 3 | 2020 | Male   |                                                      1273 |
+| 5 | 2019 | Female |                                                       188 |
+| 6 | 2020 | Female |                                                       195 |
+
 Single-authored arXiv submissions are also up overall, but again the
 number of male authors is currently growing faster than the number of
 female authors, both as a percent change and in absolute
@@ -261,7 +291,6 @@ arxiv.m.long <- gather(arxiv.m, gender, n, female.n:male.n) #Make wide data long
 arxiv.m.long$pubs.per.day <- arxiv.m.long$n/arxiv.m.long$n.days #Adjust for different numbers of days in each month
 arxiv.m.long$gender <- as.factor(arxiv.m.long$gender) #Make sure gender is a factor
 levels(arxiv.m.long$gender) <- c("Female", "Male") #Capitalize genders
-
 
 #Compare Jan/Feb 2020 (immediately before pandemic) to Mar/Apr 2020 (during pandemic)
 a.fem.mar.apr <- (arxiv.m[arxiv.m$month == "2020-03-01", "female.n"]+arxiv.m[arxiv.m$month == "2020-04-01", "female.n"])/(arxiv.m[arxiv.m$month == "2020-03-01", "n.days"]+arxiv.m[arxiv.m$month == "2020-04-01", "n.days"])
@@ -287,6 +316,25 @@ Percent changes do not appear on the figure, but arXiv preprints with
 female corresponding authors have increased 13.5% between Jan/Feb 2020
 and Mar/Apr 2020, while arXiv preprints with male corresponding authors
 have increased 16% over the same period.
+
+The same data, but in tabular form:
+
+``` r
+#Or in tabular form
+colnames(arxiv.m.long) <- c("Month beginning", "Number of days", "Gender", "Number of preprints submittted, by gender", "Number of preprints submitted per day, by gender")
+kable(arxiv.m.long)
+```
+
+| Month beginning | Number of days | Gender | Number of preprints submittted, by gender | Number of preprints submitted per day, by gender |
+| :-------------- | -------------: | :----- | ----------------------------------------: | -----------------------------------------------: |
+| 2020-01-01      |             31 | Female |                                      5626 |                                         181.4839 |
+| 2020-02-01      |             29 | Female |                                      6226 |                                         214.6897 |
+| 2020-03-01      |             31 | Female |                                      6652 |                                         214.5806 |
+| 2020-04-01      |             22 | Female |                                      5228 |                                         237.6364 |
+| 2020-01-01      |             31 | Male   |                                     21073 |                                         679.7742 |
+| 2020-02-01      |             29 | Male   |                                     23920 |                                         824.8276 |
+| 2020-03-01      |             31 | Male   |                                     26048 |                                         840.2581 |
+| 2020-04-01      |             22 | Male   |                                     20055 |                                         911.5909 |
 
 ## bioRxiv submissions
 
@@ -357,10 +405,8 @@ total.b.authors.with.gender <- length(all.biorxiv[!is.na(all.biorxiv$gender), "g
 per.b.gender <- round(total.b.authors.with.gender/total.b.authors*100, 1)
 ```
 
-There are 18199 preprints in the bioRxiv dataset for 2019-2020. Because
-the bioRxiv analysis focuses on corresponding authors only, and each
-preprint has a single corresponding author, there are also 18199
-non-unique corresponding authors. I inferred the gender of 14618
+There are 18199 preprints in the bioRxiv dataset for 2019-2020, each
+with a single corresponding author. I inferred the gender of 14618
 corresponding authors, or 80.3%, with the rest omitted from subsequent
 analyses.
 
@@ -387,6 +433,21 @@ p4
 ``` r
 p5 <- plot_grid(p1, p2, p4, nrow=1) #Combine into part of a single figure
 ```
+
+The same data in tabular
+form:
+
+``` r
+colnames(biorxiv.yr) <- c("Year", "Gender", "Number of preprints submitted, by gender of corresponding author")
+kable(subset(biorxiv.yr, Year != 2018))
+```
+
+|   | Year | Gender | Number of preprints submitted, by gender of corresponding author |
+| - | :--- | :----- | ---------------------------------------------------------------: |
+| 3 | 2019 | Female |                                                              803 |
+| 4 | 2019 | Male   |                                                             2006 |
+| 5 | 2020 | Female |                                                              997 |
+| 6 | 2020 | Male   |                                                             2527 |
 
 The gender difference for corresponding authors of bioRxiv preprints is
 more modest than in the arXiv dataset, but the number of male
@@ -446,6 +507,25 @@ preprints with female corresponding authors have increased 11.3% between
 Jan/Feb 2020 and Mar/Apr 2020, while bioRxiv preprints with male
 corresponding authors have increased 15.4% over the same period.
 
+The same data, but in tabular form:
+
+``` r
+#Or in tabular form
+colnames(biorxiv.m) <- c("Month beginning", "Gender", "Number of preprints submittted, by gender", "Number of days", "Number of preprints submitted per day, by gender")
+kable(biorxiv.m)
+```
+
+| Month beginning | Gender | Number of preprints submittted, by gender | Number of days | Number of preprints submitted per day, by gender |
+| :-------------- | :----- | ----------------------------------------: | -------------: | -----------------------------------------------: |
+| 2020-01-01      | Female |                                       881 |             31 |                                         28.41935 |
+| 2020-01-01      | Male   |                                      2032 |             31 |                                         65.54839 |
+| 2020-02-01      | Female |                                       880 |             29 |                                         30.34483 |
+| 2020-02-01      | Male   |                                      2086 |             29 |                                         71.93103 |
+| 2020-03-01      | Female |                                       979 |             31 |                                         31.58065 |
+| 2020-03-01      | Male   |                                      2387 |             31 |                                         77.00000 |
+| 2020-04-01      | Female |                                       752 |             22 |                                         34.18182 |
+| 2020-04-01      | Male   |                                      1812 |             22 |                                         82.36364 |
+
 Finally, I put it all together in a single figure.
 
 ``` r
@@ -464,8 +544,9 @@ preprints describe research completed months ago, long before the
 COVID-19 pandemic. Furthermore, it is important to note that gender is
 not perfectly predictive of increased caregiving demands during the
 pandemic; some male academics are primary caregivers for their children,
-many female academics do not have children at home, and children are not
-the only people who may need more care than usual during COVID-19.
+and many female academics do not have children at home. (And, of course,
+children are not the only people who may need more care than usual
+during COVID-19.)
 
 However, the trends in both preprint servers are consistent with the
 hypothesis that the pandemic is disproportionately hurting the
