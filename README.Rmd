@@ -206,7 +206,7 @@ The same data, but in tabular form:
 
 ```{r, arXiv year-over-year table}
 #Or in tabular form
-colnames(all.long) <- c("Year", "Total arXiv preprints submitted", "Gender", "Number of arXiv preprints submittted, by gender")
+colnames(all.long) <- c("Year", "Total authors submitting arXiv preprints", "Gender", "Number of authors submitting arXiv preprints, by gender")
 kable(subset(all.long, Year != 2018))
 ```
 
@@ -273,7 +273,7 @@ The same data, but in tabular form:
 
 ```{r, arXiv early 2020 table, by month}
 #Or in tabular form
-colnames(arxiv.m.long) <- c("Month beginning", "Number of days", "Gender", "Number of arXiv preprints submittted, by gender", "Number of arXiv preprints submitted per day, by gender")
+colnames(arxiv.m.long) <- c("Month beginning", "Number of days", "Gender", "Number of authors of arXiv preprints, by gender", "Number of authors of arXiv preprints per day, by gender")
 kable(arxiv.m.long)
 ```
 
@@ -421,7 +421,7 @@ The same data, but in tabular form:
 
 ```{r, bioRxiv early 2020 table, by month}
 #Or in tabular form
-colnames(biorxiv.m) <- c("Month beginning", "Gender", "Number of bioRxiv preprints submittted, by gender", "Number of days", "Number of bioRxiv preprints submitted per day, by gender")
+colnames(biorxiv.m) <- c("Month beginning", "Gender", "Number of bioRxiv preprints submittted, by gender of corresponding author", "Number of days", "Number of bioRxiv preprints submitted per day, by gender of corresponding author")
 kable(biorxiv.m)
 ```
 

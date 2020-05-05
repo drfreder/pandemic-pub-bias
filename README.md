@@ -223,16 +223,16 @@ The same data, but in tabular form:
 
 ``` r
 #Or in tabular form
-colnames(all.long) <- c("Year", "Total arXiv preprints submitted", "Gender", "Number of arXiv preprints submittted, by gender")
+colnames(all.long) <- c("Year", "Total authors submitting arXiv preprints", "Gender", "Number of authors submitting arXiv preprints, by gender")
 kable(subset(all.long, Year != 2018))
 ```
 
-|   | Year | Total arXiv preprints submitted | Gender | Number of arXiv preprints submittted, by gender |
-| - | :--- | ------------------------------: | :----- | ----------------------------------------------: |
-| 2 | 2019 |                           32736 | Male   |                                           25768 |
-| 3 | 2020 |                           34573 | Male   |                                           27416 |
-| 5 | 2019 |                           32736 | Female |                                            6968 |
-| 6 | 2020 |                           34573 | Female |                                            7157 |
+|   | Year | Total authors submitting arXiv preprints | Gender | Number of authors submitting arXiv preprints, by gender |
+| - | :--- | ---------------------------------------: | :----- | ------------------------------------------------------: |
+| 2 | 2019 |                                    32736 | Male   |                                                   25768 |
+| 3 | 2020 |                                    34573 | Male   |                                                   27416 |
+| 5 | 2019 |                                    32736 | Female |                                                    6968 |
+| 6 | 2020 |                                    34573 | Female |                                                    7157 |
 
 arXiv preprint submissions are up overall, but the number of male
 authors is currently growing faster than the number of female authors.
@@ -328,20 +328,20 @@ The same data, but in tabular form:
 
 ``` r
 #Or in tabular form
-colnames(arxiv.m.long) <- c("Month beginning", "Number of days", "Gender", "Number of arXiv preprints submittted, by gender", "Number of arXiv preprints submitted per day, by gender")
+colnames(arxiv.m.long) <- c("Month beginning", "Number of days", "Gender", "Number of authors of arXiv preprints, by gender", "Number of authors of arXiv preprints per day, by gender")
 kable(arxiv.m.long)
 ```
 
-| Month beginning | Number of days | Gender | Number of arXiv preprints submittted, by gender | Number of arXiv preprints submitted per day, by gender |
-| :-------------- | -------------: | :----- | ----------------------------------------------: | -----------------------------------------------------: |
-| 2020-01-01      |             31 | Female |                                            5626 |                                               181.4839 |
-| 2020-02-01      |             29 | Female |                                            6226 |                                               214.6897 |
-| 2020-03-01      |             31 | Female |                                            6652 |                                               214.5806 |
-| 2020-04-01      |             30 | Female |                                            7470 |                                               249.0000 |
-| 2020-01-01      |             31 | Male   |                                           21073 |                                               679.7742 |
-| 2020-02-01      |             29 | Male   |                                           23920 |                                               824.8276 |
-| 2020-03-01      |             31 | Male   |                                           26048 |                                               840.2581 |
-| 2020-04-01      |             30 | Male   |                                           28008 |                                               933.6000 |
+| Month beginning | Number of days | Gender | Number of authors of arXiv preprints, by gender | Number of authors of arXiv preprints per day, by gender |
+| :-------------- | -------------: | :----- | ----------------------------------------------: | ------------------------------------------------------: |
+| 2020-01-01      |             31 | Female |                                            5626 |                                                181.4839 |
+| 2020-02-01      |             29 | Female |                                            6226 |                                                214.6897 |
+| 2020-03-01      |             31 | Female |                                            6652 |                                                214.5806 |
+| 2020-04-01      |             30 | Female |                                            7470 |                                                249.0000 |
+| 2020-01-01      |             31 | Male   |                                           21073 |                                                679.7742 |
+| 2020-02-01      |             29 | Male   |                                           23920 |                                                824.8276 |
+| 2020-03-01      |             31 | Male   |                                           26048 |                                                840.2581 |
+| 2020-04-01      |             30 | Male   |                                           28008 |                                                933.6000 |
 
 ## bioRxiv submissions
 
@@ -524,20 +524,20 @@ The same data, but in tabular form:
 
 ``` r
 #Or in tabular form
-colnames(biorxiv.m) <- c("Month beginning", "Gender", "Number of bioRxiv preprints submittted, by gender", "Number of days", "Number of bioRxiv preprints submitted per day, by gender")
+colnames(biorxiv.m) <- c("Month beginning", "Gender", "Number of bioRxiv preprints submittted, by gender of corresponding author", "Number of days", "Number of bioRxiv preprints submitted per day, by gender of corresponding author")
 kable(biorxiv.m)
 ```
 
-| Month beginning | Gender | Number of bioRxiv preprints submittted, by gender | Number of days | Number of bioRxiv preprints submitted per day, by gender |
-| :-------------- | :----- | ------------------------------------------------: | -------------: | -------------------------------------------------------: |
-| 2020-01-01      | Female |                                               881 |             31 |                                                 28.41935 |
-| 2020-01-01      | Male   |                                              2032 |             31 |                                                 65.54839 |
-| 2020-02-01      | Female |                                               880 |             29 |                                                 30.34483 |
-| 2020-02-01      | Male   |                                              2086 |             29 |                                                 71.93103 |
-| 2020-03-01      | Female |                                               979 |             31 |                                                 31.58065 |
-| 2020-03-01      | Male   |                                              2387 |             31 |                                                 77.00000 |
-| 2020-04-01      | Female |                                              1134 |             30 |                                                 37.80000 |
-| 2020-04-01      | Male   |                                              2666 |             30 |                                                 88.86667 |
+| Month beginning | Gender | Number of bioRxiv preprints submittted, by gender of corresponding author | Number of days | Number of bioRxiv preprints submitted per day, by gender of corresponding author |
+| :-------------- | :----- | ------------------------------------------------------------------------: | -------------: | -------------------------------------------------------------------------------: |
+| 2020-01-01      | Female |                                                                       881 |             31 |                                                                         28.41935 |
+| 2020-01-01      | Male   |                                                                      2032 |             31 |                                                                         65.54839 |
+| 2020-02-01      | Female |                                                                       880 |             29 |                                                                         30.34483 |
+| 2020-02-01      | Male   |                                                                      2086 |             29 |                                                                         71.93103 |
+| 2020-03-01      | Female |                                                                       979 |             31 |                                                                         31.58065 |
+| 2020-03-01      | Male   |                                                                      2387 |             31 |                                                                         77.00000 |
+| 2020-04-01      | Female |                                                                      1134 |             30 |                                                                         37.80000 |
+| 2020-04-01      | Male   |                                                                      2666 |             30 |                                                                         88.86667 |
 
 Finally, I put it all together in a single figure.
 
