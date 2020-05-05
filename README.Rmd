@@ -82,11 +82,16 @@ df.early2020.full <- rbind(df.early2020.1, df.early2020.2, df.early2020.3, df.ea
 n.early2020-length(df.early2020.full$id)
 write.csv(df.early2020.full, file="Data/arxiv_early2020_data.csv")
 
-#Get all submissions between Apr. 16, 2020 and April 22, 2020 (update analysis with most recent data)
+#Get all submissions between Apr. 16, 2020 and April 30, 2020 (update analysis with most recent data)
 n.update <- arxiv_count(query = 'submittedDate:[202004160000 TO 202004222400]')
 df.update <- arxiv_search(query = 'submittedDate:[202004160000 TO 202004222400]', limit=n.update, batchsize=2000)
 n.update - length(df.update$id)
 write.csv(df.update, file="Data/arxiv_update2020_data.csv")
+
+n.update.2 <- arxiv_count(query = 'submittedDate:[202004230000 TO 202004302400]')
+df.update.2 <- arxiv_search(query = 'submittedDate:[202004230000 TO 202004302400]', limit=n.update.2, batchsize=2000)
+n.update.2 - length(df.update.2$id)
+write.csv(df.update, file="Data/arxiv_update2020_2_data.csv")
 ```
  
 Next, I assigned gender to author names using the gender package, see:
@@ -110,7 +115,8 @@ df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 #Next combine data for 2020 comparison
 df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
 df.update <- read.csv("Data/arxiv_update2020_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update) #Combine in one dataframe
+df.update.2 <- read.csv("Data/arxiv_update2020_2_data.csv")
+df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2[, -1]) #Combine in one dataframe
 
 split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Function to split strings of author names
 
@@ -259,7 +265,7 @@ p3 <- ggplot(data=arxiv.m.long, aes(fill=gender, y=pubs.per.day, x=month))+geom_
 p3
 ```
 
-The number of male authors of arXiv preprints has increased through early 2020, while the number of female authors of arXiv preprints has almost plateaued during the pandemic.
+The number of male authors of arXiv preprints has increased quite a bit through early 2020, while the number of female authors of arXiv preprints has plateaued (March) or increasingly more modestly (April) during the pandemic.
 
 Percent changes do not appear on the figure, but arXiv preprints with female corresponding authors have increased `r a.fem.per.increase`% between Jan/Feb 2020 and Mar/Apr 2020, while arXiv preprints with male corresponding authors have increased `r a.m.per.increase`% over the same period. 
 
@@ -288,9 +294,13 @@ df.b.2019 <- biorxiv_content(from = "2019-03-15", to = "2019-04-15", limit = "*"
 #Get all submissions for March 15 to April 15, 2018
 df.b.2018 <- biorxiv_content(from = "2018-03-15", to = "2018-04-15", limit = "*", format = "df")
 
+#Update with April 22 to April 30, 2020 data
+df.b.2020.update <- biorxiv_content(from = "2020-04-22", to = "2020-04-30", limit = "*", format = "df")
+
 write.csv(df.b.2020, "Data/biorxiv_2020_data.csv")
 write.csv(df.b.2019, "Data/biorxiv_2019_data.csv")
 write.csv(df.b.2018, "Data/biorxiv_2018_data.csv")
+write.csv(df.b.2020.update, "Data/biorxiv_2020_update_data.csv")
 ```
 
 I then inferred the gender of corresponding authors of bioRxiv preprints, as above. Note that the bioRxiv API only returns first names for corresponding authors, and not for all authors. (Unfortunately.)
@@ -299,8 +309,10 @@ I then inferred the gender of corresponding authors of bioRxiv preprints, as abo
 df.b.2018 <- read.csv("Data/biorxiv_2018_data.csv") #Read in data
 df.b.2019 <- read.csv("Data/biorxiv_2019_data.csv")
 df.b.all2020 <- read.csv("Data/biorxiv_2020_data.csv")
+df.b.2020.update <- read.csv("Data/biorxiv_2020_update_data.csv")
 
 df.b.full <- rbind(df.b.2018, df.b.2019, subset(df.b.all2020, as.Date(date) >= "2020-03-15" & as.Date(date) <= "2020-04-15")) #Make year comparison, subsetting 2020 data to just March 15 to April 15
+df.b.all2020 <- rbind(df.b.all2020, df.b.2020.update)
 
 df.b.full$cor.author.first.name <- sapply(strsplit(as.character(df.b.full$author_corresponding), " "), head, 1) #Extract first names
 df.b.all2020$cor.author.first.name <- sapply(strsplit(as.character(df.b.all2020$author_corresponding), " "), head, 1) #Extract first names

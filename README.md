@@ -78,11 +78,16 @@ df.early2020.full <- rbind(df.early2020.1, df.early2020.2, df.early2020.3, df.ea
 n.early2020-length(df.early2020.full$id)
 write.csv(df.early2020.full, file="Data/arxiv_early2020_data.csv")
 
-#Get all submissions between Apr. 16, 2020 and April 22, 2020 (update analysis with most recent data)
+#Get all submissions between Apr. 16, 2020 and April 30, 2020 (update analysis with most recent data)
 n.update <- arxiv_count(query = 'submittedDate:[202004160000 TO 202004222400]')
 df.update <- arxiv_search(query = 'submittedDate:[202004160000 TO 202004222400]', limit=n.update, batchsize=2000)
 n.update - length(df.update$id)
 write.csv(df.update, file="Data/arxiv_update2020_data.csv")
+
+n.update.2 <- arxiv_count(query = 'submittedDate:[202004230000 TO 202004302400]')
+df.update.2 <- arxiv_search(query = 'submittedDate:[202004230000 TO 202004302400]', limit=n.update.2, batchsize=2000)
+n.update.2 - length(df.update.2$id)
+write.csv(df.update, file="Data/arxiv_update2020_2_data.csv")
 ```
 
 Next, I assigned gender to author names using the gender package, see:
@@ -119,7 +124,8 @@ df.full <- rbind(df.2018, df.2019, df.2020) #Combine in one dataframe
 #Next combine data for 2020 comparison
 df.early2020 <- read.csv("Data/arxiv_early2020_data.csv")
 df.update <- read.csv("Data/arxiv_update2020_data.csv")
-df.all2020 <- rbind(df.2020, df.early2020, df.update) #Combine in one dataframe
+df.update.2 <- read.csv("Data/arxiv_update2020_2_data.csv")
+df.all2020 <- rbind(df.2020, df.early2020, df.update, df.update.2[, -1]) #Combine in one dataframe
 
 split.names <- function(x){strsplit(as.character(x), "|", fixed=TRUE)} #Function to split strings of author names
 
@@ -185,9 +191,9 @@ total.authors.with.gender <- sum(all.arxiv$male.n+all.arxiv$female.n) #Total num
 per.gender <- round(total.authors.with.gender/total.authors*100, 1) #Percent of authors with gender
 ```
 
-There are 78955 preprints in the arXiv dataset for 2019-2020, with a
-total of 380771 non-unique authors. I inferred the gender of 182137
-authors, or 47.8%, with the rest omitted from subsequent
+There are 82434 preprints in the arXiv dataset for 2019-2020, with a
+total of 399932 non-unique authors. I inferred the gender of 190636
+authors, or 47.7%, with the rest omitted from subsequent
 analyses.
 
 ### Total numbers of arXiv preprint authors in Mar/Apr 2020 compared to Mar/Apr 2019, by gender
@@ -308,14 +314,15 @@ p3
 
 ![](README_files/figure-gfm/2020%20analysis-1.png)<!-- -->
 
-The number of male authors of arXiv preprints has increased through
-early 2020, while the number of female authors of arXiv preprints has
-almost plateaued during the pandemic.
+The number of male authors of arXiv preprints has increased quite a bit
+through early 2020, while the number of female authors of arXiv
+preprints has plateaued (March) or increasingly more modestly (April)
+during the pandemic.
 
 Percent changes do not appear on the figure, but arXiv preprints with
-female corresponding authors have increased 13.5% between Jan/Feb 2020
+female corresponding authors have increased 30.5% between Jan/Feb 2020
 and Mar/Apr 2020, while arXiv preprints with male corresponding authors
-have increased 16% over the same period.
+have increased 32.9% over the same period.
 
 The same data, but in tabular form:
 
@@ -330,11 +337,11 @@ kable(arxiv.m.long)
 | 2020-01-01      |             31 | Female |                                            5626 |                                               181.4839 |
 | 2020-02-01      |             29 | Female |                                            6226 |                                               214.6897 |
 | 2020-03-01      |             31 | Female |                                            6652 |                                               214.5806 |
-| 2020-04-01      |             22 | Female |                                            5228 |                                               237.6364 |
+| 2020-04-01      |             22 | Female |                                            7010 |                                               318.6364 |
 | 2020-01-01      |             31 | Male   |                                           21073 |                                               679.7742 |
 | 2020-02-01      |             29 | Male   |                                           23920 |                                               824.8276 |
 | 2020-03-01      |             31 | Male   |                                           26048 |                                               840.2581 |
-| 2020-04-01      |             22 | Male   |                                           20055 |                                               911.5909 |
+| 2020-04-01      |             22 | Male   |                                           26772 |                                              1216.9091 |
 
 ## bioRxiv submissions
 
@@ -357,9 +364,13 @@ df.b.2019 <- biorxiv_content(from = "2019-03-15", to = "2019-04-15", limit = "*"
 #Get all submissions for March 15 to April 15, 2018
 df.b.2018 <- biorxiv_content(from = "2018-03-15", to = "2018-04-15", limit = "*", format = "df")
 
+#Update with April 22 to April 30, 2020 data
+df.b.2020.update <- biorxiv_content(from = "2020-04-22", to = "2020-04-30", limit = "*", format = "df")
+
 write.csv(df.b.2020, "Data/biorxiv_2020_data.csv")
 write.csv(df.b.2019, "Data/biorxiv_2019_data.csv")
 write.csv(df.b.2018, "Data/biorxiv_2018_data.csv")
+write.csv(df.b.2020.update, "Data/biorxiv_2020_update_data.csv")
 ```
 
 I then inferred the gender of corresponding authors of bioRxiv
@@ -370,8 +381,10 @@ for corresponding authors, and not for all authors. (Unfortunately.)
 df.b.2018 <- read.csv("Data/biorxiv_2018_data.csv") #Read in data
 df.b.2019 <- read.csv("Data/biorxiv_2019_data.csv")
 df.b.all2020 <- read.csv("Data/biorxiv_2020_data.csv")
+df.b.2020.update <- read.csv("Data/biorxiv_2020_update_data.csv")
 
 df.b.full <- rbind(df.b.2018, df.b.2019, subset(df.b.all2020, as.Date(date) >= "2020-03-15" & as.Date(date) <= "2020-04-15")) #Make year comparison, subsetting 2020 data to just March 15 to April 15
+df.b.all2020 <- rbind(df.b.all2020, df.b.2020.update)
 
 df.b.full$cor.author.first.name <- sapply(strsplit(as.character(df.b.full$author_corresponding), " "), head, 1) #Extract first names
 df.b.all2020$cor.author.first.name <- sapply(strsplit(as.character(df.b.all2020$author_corresponding), " "), head, 1) #Extract first names
@@ -405,8 +418,8 @@ total.b.authors.with.gender <- length(all.biorxiv[!is.na(all.biorxiv$gender), "g
 per.b.gender <- round(total.b.authors.with.gender/total.b.authors*100, 1)
 ```
 
-There are 18199 preprints in the bioRxiv dataset for 2019-2020, each
-with a single corresponding author. I inferred the gender of 14618
+There are 19751 preprints in the bioRxiv dataset for 2019-2020, each
+with a single corresponding author. I inferred the gender of 15854
 corresponding authors, or 80.3%, with the rest omitted from subsequent
 analyses.
 
@@ -503,9 +516,9 @@ through early 2020, while the number of female authors of bioRxiv
 preprints has increased only slightly.
 
 Again the percent change does not appear on the figure, but bioRxiv
-preprints with female corresponding authors have increased 11.3% between
+preprints with female corresponding authors have increased 18% between
 Jan/Feb 2020 and Mar/Apr 2020, while bioRxiv preprints with male
-corresponding authors have increased 15.4% over the same period.
+corresponding authors have increased 20.7% over the same period.
 
 The same data, but in tabular form:
 
@@ -523,8 +536,8 @@ kable(biorxiv.m)
 | 2020-02-01      | Male   |                                              2086 |             29 |                                                 71.93103 |
 | 2020-03-01      | Female |                                               979 |             31 |                                                 31.58065 |
 | 2020-03-01      | Male   |                                              2387 |             31 |                                                 77.00000 |
-| 2020-04-01      | Female |                                               752 |             22 |                                                 34.18182 |
-| 2020-04-01      | Male   |                                              1812 |             22 |                                                 82.36364 |
+| 2020-04-01      | Female |                                              1134 |             30 |                                                 37.80000 |
+| 2020-04-01      | Male   |                                              2666 |             30 |                                                 88.86667 |
 
 Finally, I put it all together in a single figure.
 
