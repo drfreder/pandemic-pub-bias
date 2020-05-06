@@ -434,6 +434,38 @@ p8
 save_plot("figure.png", p8, base_height=12, base_width=12)
 ```
 
+I also made an additional, simpler figure to accompany a story I wrote for *The Conversation.*
+
+```{r The Conversation figure, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, dpi=300}
+
+#arXiv, simplified
+all.t$per.dif.1819 <- ((all.t$`2019`-all.t$`2018`)/(all.t$`2018`))*100 #Calculate percent change, 2019 over 2018
+all.t.t <- as.data.frame(t(all.t))
+all.t.t$dif <- as.numeric(all.t.t$Female) - as.numeric(all.t.t$Male)
+all.t.t <- all.t.t[4:5, ]
+all.t.t$Year <- c("2019 to 2020","2018 to 2019")
+
+#Make figure 
+p9 <- ggplot(data=all.t.t, aes(fill=Year, y=dif, x=Year))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Years compared")+scale_fill_manual(values=wes_palette("Royal1"), labels=c("Mar/Apr 2018 to Mar/Apr 2019", "Mar/Apr 2019 to Mar/Apr 2020"))+ggtitle("arXiv")+ylab("Difference in year-over-year increase \nin authors (female - male)")+ theme(legend.position = "none", legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+geom_hline(aes(yintercept=0), linetype="dashed")+scale_y_continuous(limits=c(-4,12))
+p9
+
+#bioRxiv, simplified
+biorxiv.yr.wide$per.dif.1819 <- ((biorxiv.yr.wide$`2019`-biorxiv.yr.wide$`2018`)/(biorxiv.yr.wide$`2018`))*100 #Calculate percent change, 2019 over 2018
+bio.t <- setNames(data.frame(t(biorxiv.yr.wide[,-1])), biorxiv.yr.wide[,1])
+bio.t$dif <- as.numeric(bio.t$Female) - as.numeric(bio.t$Male)
+bio.t <- bio.t[4:5,]
+bio.t$Year <- c("2019 to 2020","2018 to 2019")
+
+#Make figure 
+p10 <- ggplot(data=bio.t, aes(fill=Year, y=dif, x=Year))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Years compared")+scale_fill_manual(values=wes_palette("Royal1"), labels=c("Mar/Apr 2018 to Mar/Apr 2019", "Mar/Apr 2019 to Mar/Apr 2020"))+ggtitle("bioRxiv")+ylab("Difference in year-over-year increase \nin authors (female - male)")+ theme(legend.position = c(0.1, 0.5), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+geom_hline(aes(yintercept=0), linetype="dashed")+scale_y_continuous(limits=c(-4,12))
+p10
+
+p11<- plot_grid(p9, p10, nrow=1)
+p11
+
+
+save_plot("Conversation_figure.png", p11, base_height=8, base_width=8)
+```
 Throughout this analysis, effects are likely conservative because many preprints describe research completed months ago, long before the COVID-19 pandemic. Furthermore, it is important to note that gender is not perfectly predictive of increased caregiving demands during the pandemic; some male academics are primary caregivers for their children, and many female academics do not have children at home. (And, of course, children are not the only people who may need more care than usual during COVID-19.)
 
 However, the trends in both preprint servers are consistent with the hypothesis that the pandemic is disproportionately hurting the productivity of female scholars. How long this effect will persist, and what its downstream consequences might be for journal publications and academic careers, are open questions. This analysis could also be extended to examine the effects of author order, field, and researcher institution or country, or to other preprint servers, none of which I have done. 
