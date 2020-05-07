@@ -565,12 +565,7 @@ all.t.t$Year <- c("2019 to 2020","2018 to 2019")
 
 #Make figure 
 p9 <- ggplot(data=all.t.t, aes(fill=Year, y=dif, x=Year))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Years compared")+scale_fill_manual(values=wes_palette("Royal1"), labels=c("Mar/Apr 2018 to Mar/Apr 2019", "Mar/Apr 2019 to Mar/Apr 2020"))+ggtitle("arXiv")+ylab("Difference in year-over-year increase \nin authors (female - male)")+ theme(legend.position = "none", legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+geom_hline(aes(yintercept=0), linetype="dashed")+scale_y_continuous(limits=c(-4,12))
-p9
-```
 
-![](README_files/figure-gfm/The%20Conversation%20figure-1.png)<!-- -->
-
-``` r
 #bioRxiv, simplified
 biorxiv.yr.wide$per.dif.1819 <- ((biorxiv.yr.wide$`2019`-biorxiv.yr.wide$`2018`)/(biorxiv.yr.wide$`2018`))*100 #Calculate percent change, 2019 over 2018
 bio.t <- setNames(data.frame(t(biorxiv.yr.wide[,-1])), biorxiv.yr.wide[,1])
@@ -580,17 +575,12 @@ bio.t$Year <- c("2019 to 2020","2018 to 2019")
 
 #Make figure 
 p10 <- ggplot(data=bio.t, aes(fill=Year, y=dif, x=Year))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+xlab("Years compared")+scale_fill_manual(values=wes_palette("Royal1"), labels=c("Mar/Apr 2018 to Mar/Apr 2019", "Mar/Apr 2019 to Mar/Apr 2020"))+ggtitle("bioRxiv")+ylab("Difference in year-over-year increase \nin authors (female - male)")+ theme(legend.position = c(0.1, 0.5), legend.title = element_blank(), plot.title = element_text(hjust = 0.5))+geom_hline(aes(yintercept=0), linetype="dashed")+scale_y_continuous(limits=c(-4,12))
-p10
-```
 
-![](README_files/figure-gfm/The%20Conversation%20figure-2.png)<!-- -->
-
-``` r
 p11<- plot_grid(p9, p10, nrow=1)
 p11
 ```
 
-![](README_files/figure-gfm/The%20Conversation%20figure-3.png)<!-- -->
+![](README_files/figure-gfm/The%20Conversation%20figure-1.png)<!-- -->
 
 ``` r
 save_plot("Conversation_figure.png", p11, base_height=8, base_width=8)
