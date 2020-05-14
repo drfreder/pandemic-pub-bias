@@ -237,7 +237,7 @@ kable(sole.long)
 
 ### Comparing arXiv preprint submissions in the months before and during COVID-19 pandemic, by gender
 
-Next, I looked back over the months leading up to widespread stay-at-home orders and school and childcare closures that North Americans experienced beginning in late March or early April, 2020. These measures were implemented to different degrees and on different dates in different parts of the world, but I assumed their effects would be most pronounced globally in the months of March and April, 2020. 
+Next, I looked back over the months leading up to widespread stay-at-home orders and school and childcare closures that North Americans experienced beginning in late March or early April, 2020. These measures were implemented to different degrees and on different dates in different parts of the world, but I assumed their effects would be most pronounced (globally) in the months of March and April, 2020. 
 
 ```{r Early 2020 arXiv analysis, fig.height=4, fig.width=8, message=FALSE, warning=FALSE, dpi=300}
 start.date <- as.Date("2020-03-01") #Month WHO declared COVID-19 a pandemic
@@ -272,6 +272,10 @@ kable(arxiv.long[,1:3])
 
 Preprints had over 9000 more male authors during the pandemic than right before, while female authors increased by a little more than 2200 over the same period. 
 
+### Comparing single-authored arXiv preprint submissions in the months before and during COVID-19 pandemic, by gender
+
+Again, what about for sole authorships? How does early 2020 compare to March and April, 2020, during the pandemic?
+
 ```{r Early 2020 arXiv sole author analysis, fig.height=4, fig.width=8, message=FALSE, warning=FALSE, dpi=300}
 arxiv.sole <- as.data.frame(ungroup(subset(df.all2020, as.Date(submitted) >= "2020-01-01" & as.Date(submitted) <= "2020-04-30" & author.n == 1) %>% group_by(COVID) %>% summarize(female.n=sum(female.n, na.rm=TRUE), male.n=sum(male.n, na.rm=TRUE)))) #Summarize by month
 arxiv.sole.long <- gather(arxiv.sole, gender, n, female.n:male.n) #Make wide data long
@@ -289,6 +293,16 @@ m.labels=c("Jan. 1 - Feb. 29, 2020", "Mar. 1 - Apr. 30, 2020")
 #Make figure
 p4 <- ggplot(data=arxiv.sole.long, aes(fill=COVID, y=n, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv")+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Gender")+theme(legend.position="top", legend.title=element_blank(), legend.text=element_text(size=fontsize), legend.justification="left")+geom_text(aes(x=x,y=y, label=paste0("+", round(per,digits=1), "%")))+scale_fill_manual(values = colours2, labels=m.labels)+labs(title="arXiv", subtitle="sole authors")+guides(fill=guide_legend(nrow=2))
 p4
+```
+
+Again, there is a bigger uptick in male than female sole-authorships during the pandemic, and the difference is larger than in the full dataset, which is dominate by multi-authored papers. 
+
+The same data, but in tabular form:
+
+```{r Early 2020 sole authors arXiv table}
+#Or in tabular form
+colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of arXiv preprint authors by gender")
+kable(arxiv.sole.long[,1:3])
 ```
 
 ## bioRxiv submissions
@@ -410,6 +424,8 @@ p7
 
 p8 <- plot_grid(p3, p4, p7, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
 ```
+
+Again, the number of male corresponding authors is growing faster than the number of female corresponding authors, comparing just before to during the pandemic.
 
 The same data, but in tabular form:
 

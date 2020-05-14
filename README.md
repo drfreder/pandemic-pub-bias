@@ -261,7 +261,7 @@ stay-at-home orders and school and childcare closures that North
 Americans experienced beginning in late March or early April, 2020.
 These measures were implemented to different degrees and on different
 dates in different parts of the world, but I assumed their effects would
-be most pronounced globally in the months of March and April,
+be most pronounced (globally) in the months of March and April,
 2020.
 
 ``` r
@@ -311,6 +311,12 @@ before, while female authors increased by a little more than 2200 over
 the same
 period.
 
+### Comparing single-authored arXiv preprint submissions in the months before and during COVID-19 pandemic, by gender
+
+Again, what about for sole authorships? How does early 2020 compare to
+March and April, 2020, during the
+pandemic?
+
 ``` r
 arxiv.sole <- as.data.frame(ungroup(subset(df.all2020, as.Date(submitted) >= "2020-01-01" & as.Date(submitted) <= "2020-04-30" & author.n == 1) %>% group_by(COVID) %>% summarize(female.n=sum(female.n, na.rm=TRUE), male.n=sum(male.n, na.rm=TRUE)))) #Summarize by month
 arxiv.sole.long <- gather(arxiv.sole, gender, n, female.n:male.n) #Make wide data long
@@ -331,6 +337,25 @@ p4
 ```
 
 ![](README_files/figure-gfm/Early%202020%20arXiv%20sole%20author%20analysis-1.png)<!-- -->
+
+Again, there is a bigger uptick in male than female sole-authorships
+during the pandemic, and the difference is larger than in the full
+dataset, which is dominate by multi-authored papers.
+
+The same data, but in tabular form:
+
+``` r
+#Or in tabular form
+colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of arXiv preprint authors by gender")
+kable(arxiv.sole.long[,1:3])
+```
+
+| Dates                       | Gender | Number of arXiv preprint authors by gender |
+| :-------------------------- | :----- | -----------------------------------------: |
+| January 1-February 29, 2020 | Female |                                        382 |
+| March 1-April 30, 2020      | Female |                                        393 |
+| January 1-February 29, 2020 | Male   |                                       2214 |
+| March 1-April 30, 2020      | Male   |                                       2370 |
 
 ## bioRxiv submissions
 
@@ -485,6 +510,10 @@ p7
 ``` r
 p8 <- plot_grid(p3, p4, p7, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
 ```
+
+Again, the number of male corresponding authors is growing faster than
+the number of female corresponding authors, comparing just before to
+during the pandemic.
 
 The same data, but in tabular form:
 
