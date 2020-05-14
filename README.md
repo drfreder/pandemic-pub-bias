@@ -308,7 +308,29 @@ kable(arxiv.long[,1:3])
 
 Preprints had over 9000 more male authors during the pandemic than right
 before, while female authors increased by a little more than 2200 over
-the same period.
+the same
+period.
+
+``` r
+arxiv.sole <- as.data.frame(ungroup(subset(df.all2020, as.Date(submitted) >= "2020-01-01" & as.Date(submitted) <= "2020-04-30" & author.n == 1) %>% group_by(COVID) %>% summarize(female.n=sum(female.n, na.rm=TRUE), male.n=sum(male.n, na.rm=TRUE)))) #Summarize by month
+arxiv.sole.long <- gather(arxiv.sole, gender, n, female.n:male.n) #Make wide data long
+arxiv.sole.long$gender <- as.factor(arxiv.sole.long$gender) #Make sure gender is a factor
+levels(arxiv.sole.long$gender) <- c("Female", "Male") #Capitalize genders
+arxiv.sole.t <- as.data.frame(t(arxiv.sole[, -1])) #Transpose
+colnames(arxiv.sole.t) <- c("January 1-February 29, 2020", "March 1-April 30, 2020") #Fix column names
+arxiv.sole.t$per <- ((arxiv.sole.t$`March 1-April 30, 2020`-arxiv.sole.t$`January 1-February 29, 2020`)/(arxiv.sole.t$`January 1-February 29, 2020`))*100 #Calculate percent change
+arxiv.sole.long$per <- c(arxiv.sole.t$per[1],arxiv.sole.t$per[1],arxiv.sole.t$per[2],arxiv.sole.t$per[2]) #Add percent change to long-format dataframe
+bump = 150 #Set for figure annotation
+arxiv.sole.long$y <- c((arxiv.sole.long[2,3]+bump), (arxiv.sole.long[2,3]+bump), (arxiv.sole.long[4,3]+bump), (arxiv.sole.long[4,3]+bump)) #Y coordinates for figure text annotation
+arxiv.sole.long$x <- c(1,1,2,2) #X coordinates for figure text annotation
+m.labels=c("Jan. 1 - Feb. 29, 2020", "Mar. 1 - Apr. 30, 2020")
+
+#Make figure
+p4 <- ggplot(data=arxiv.sole.long, aes(fill=COVID, y=n, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("arXiv")+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Gender")+theme(legend.position="top", legend.title=element_blank(), legend.text=element_text(size=fontsize), legend.justification="left")+geom_text(aes(x=x,y=y, label=paste0("+", round(per,digits=1), "%")))+scale_fill_manual(values = colours2, labels=m.labels)+labs(title="arXiv", subtitle="sole authors")+guides(fill=guide_legend(nrow=2))
+p4
+```
+
+![](README_files/figure-gfm/Early%202020%20arXiv%20sole%20author%20analysis-1.png)<!-- -->
 
 ## bioRxiv submissions
 
@@ -404,14 +426,14 @@ biorxiv.yr.wide <- spread(biorxiv.yr, year, n) #Make long data wide
 biorxiv.yr.wide$per.dif.1920 <- ((biorxiv.yr.wide$`2020`-biorxiv.yr.wide$`2019`)/biorxiv.yr.wide$`2019`)*100 #Calculate percent change, 2019 to 2020
 
 #Make figure for 2019 versus 2020 comparison
-p4 <- ggplot(data=biorxiv.yr, aes(fill=year, y=n, x=as.factor(gender)))+geom_bar(position="dodge",stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+labs(fill="Date range")+scale_fill_manual(values = colours1, labels=yr.labels)+ggtitle("bioRxiv")+ggplot2::annotate("text", x=c(1,2),  y=c(1130,2680), label = paste0("+", round(biorxiv.yr.wide$per.dif.1920), "%"))+theme(legend.position="top", legend.justification="left", legend.title=element_blank(), legend.text=element_text(size=fontsize))+guides(fill = guide_legend(nrow=2))+labs(title="bioRxiv", subtitle="corresponding authors")
-p4
+p5 <- ggplot(data=biorxiv.yr, aes(fill=year, y=n, x=as.factor(gender)))+geom_bar(position="dodge",stat="identity")+theme_cowplot()+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Year")+labs(fill="Date range")+scale_fill_manual(values = colours1, labels=yr.labels)+ggtitle("bioRxiv")+ggplot2::annotate("text", x=c(1,2),  y=c(1130,2680), label = paste0("+", round(biorxiv.yr.wide$per.dif.1920), "%"))+theme(legend.position="top", legend.justification="left", legend.title=element_blank(), legend.text=element_text(size=fontsize))+guides(fill = guide_legend(nrow=2))+labs(title="bioRxiv", subtitle="corresponding authors")
+p5
 ```
 
 ![](README_files/figure-gfm/Visualize%20bioRxiv%202019%20versus%202020%20data-1.png)<!-- -->
 
 ``` r
-p5 <- plot_grid(p1, p2, p4, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
+p6 <- plot_grid(p1, p2, p5, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
 ```
 
 The same data in tabular
@@ -454,15 +476,14 @@ biorxiv$y <- c((biorxiv[3,3]+bump), (biorxiv[4,3]+bump), (biorxiv[3,3]+bump), (b
 biorxiv$x <- c(1,2,1,2) #x coodinates for figure text
 
 #Make figure
-p6 <- ggplot(data=biorxiv, aes(fill=COVID, y=n, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv")+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Date range")+scale_fill_manual(values = colours2, labels=m.labels)+theme(legend.position="top", legend.justification="left", legend.title=element_blank(), legend.text=element_text(size=fontsize))+geom_text(aes(x=x,y=y, label=paste0("+", round(per), "%")))+labs(title="bioRxiv", subtitle="corresponding authors")+guides(fill=guide_legend(nrow=2))
-p6
+p7 <- ggplot(data=biorxiv, aes(fill=COVID, y=n, x=gender))+geom_bar(position="dodge", stat="identity")+theme_cowplot()+ggtitle("bioRxiv")+xlab("Gender")+ylab("Authors (no.)")+labs(fill="Date range")+scale_fill_manual(values = colours2, labels=m.labels)+theme(legend.position="top", legend.justification="left", legend.title=element_blank(), legend.text=element_text(size=fontsize))+geom_text(aes(x=x,y=y, label=paste0("+", round(per), "%")))+labs(title="bioRxiv", subtitle="corresponding authors")+guides(fill=guide_legend(nrow=2))
+p7
 ```
 
 ![](README_files/figure-gfm/Visualize%20bioRxiv%202020%20data-1.png)<!-- -->
 
 ``` r
-p7 <- plot_grid(p3, p6, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
-p7 <- plot_grid(p7, NULL, nrow=1, rel_widths=c(2,1))
+p8 <- plot_grid(p3, p4, p7, nrow=1, align='hv', axis='lb') #Combine into part of a single figure
 ```
 
 The same data, but in tabular form:
@@ -483,14 +504,14 @@ kable(biorxiv[,1:3])
 Finally, I put it all together in a single figure.
 
 ``` r
-p8 <- plot_grid(p5, p7, nrow=2, align = 'v', axis='l')
-p8 #Omnibus figure
+p9 <- plot_grid(p6, p8, nrow=2, align = 'v', axis='l')
+p9 #Omnibus figure
 ```
 
 ![](README_files/figure-gfm/Combine%20visualizations-1.png)<!-- -->
 
 ``` r
-save_plot("figure.png", p8, base_height=8, base_width=8)
+save_plot("figure.png", p9, base_height=8, base_width=8, dpi=600)
 ```
 
 Throughout this analysis, effects are likely conservative because many
