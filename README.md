@@ -346,16 +346,16 @@ The same data, but in tabular form:
 
 ``` r
 #Or in tabular form
-colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of arXiv preprint authors by gender")
+colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of single-authored arXiv preprints, by gender")
 kable(arxiv.sole.long[,1:3])
 ```
 
-| Dates                       | Gender | Number of arXiv preprint authors by gender |
-| :-------------------------- | :----- | -----------------------------------------: |
-| January 1-February 29, 2020 | Female |                                        382 |
-| March 1-April 30, 2020      | Female |                                        393 |
-| January 1-February 29, 2020 | Male   |                                       2214 |
-| March 1-April 30, 2020      | Male   |                                       2370 |
+| Dates                       | Gender | Number of single-authored arXiv preprints, by gender |
+| :-------------------------- | :----- | ---------------------------------------------------: |
+| January 1-February 29, 2020 | Female |                                                  382 |
+| March 1-April 30, 2020      | Female |                                                  393 |
+| January 1-February 29, 2020 | Male   |                                                 2214 |
+| March 1-April 30, 2020      | Male   |                                                 2370 |
 
 ## bioRxiv submissions
 

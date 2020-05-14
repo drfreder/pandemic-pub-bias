@@ -301,7 +301,7 @@ The same data, but in tabular form:
 
 ```{r Early 2020 sole authors arXiv table}
 #Or in tabular form
-colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of arXiv preprint authors by gender")
+colnames(arxiv.sole.long) <- c("Dates", "Gender", "Number of single-authored arXiv preprints, by gender")
 kable(arxiv.sole.long[,1:3])
 ```
 
